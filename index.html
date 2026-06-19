@@ -233,6 +233,53 @@ input:focus{ outline: none; }
 }
 .status-badge.bom{ color: #A7F3D0; border-color: var(--verde); background: rgba(34,197,94,.12); }
 .status-badge.ruim{ color: #FCA5A5; border-color: var(--danger); background: rgba(239,68,68,.12); }
+
+/* detalhar cálculo */
+.btn-detalhar{
+  display:flex; align-items:center; gap:8px; margin:16px auto 0;
+  background: transparent;
+  border: 1px solid var(--painel-linha);
+  color: var(--texto-painel-mudo);
+  font-family: var(--fonte-dado); font-size: .8rem;
+  padding: 10px 18px; border-radius: 6px;
+  cursor: pointer; transition: all .2s;
+}
+.btn-detalhar:hover{ border-color: var(--ciano); color: var(--ciano); }
+.btn-detalhar[aria-expanded="true"]{ border-color: var(--ciano); color: var(--ciano); }
+.btn-detalhar-icone{ display:inline-block; transition: transform .2s; font-size: .7rem; }
+.btn-detalhar[aria-expanded="true"] .btn-detalhar-icone{ transform: rotate(90deg); }
+
+.detalhe-calculo{
+  display: none; margin-top: 18px;
+  padding: 18px 20px;
+  background: var(--painel-bg);
+  border: 1px solid var(--painel-linha);
+  border-radius: 6px;
+}
+.detalhe-calculo.aberto{ display: block; }
+.detalhe-calculo h3{
+  font-family: var(--fonte-dado); font-weight: 600;
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--texto-painel-mudo); margin: 0 0 14px;
+}
+.passo-calculo{
+  display: flex; gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--painel-linha);
+  font-size: .86rem; line-height: 1.6;
+}
+.passo-calculo:first-of-type{ border-top: none; padding-top: 0; }
+.passo-calculo > div{ flex: 1; }
+.passo-calculo p{ margin: 0; color: var(--texto-painel-mudo); }
+.passo-calculo strong{ color: var(--texto-painel); }
+.passo-numero{
+  font-family: var(--fonte-dado); font-weight: 700; font-size: .8rem;
+  color: var(--ciano); flex-shrink:0;
+}
+.passo-resultado{
+  font-family: var(--fonte-display); font-weight: 700; font-size: 1rem;
+  color: var(--ciano); margin-top: 2px !important;
+}
  
 /* ============================================================
    MANUAL (ficha técnica)
@@ -323,9 +370,9 @@ input:focus{ outline: none; }
   <section id="calculadora" class="painel hero">
     <div class="painel-grid-bg" aria-hidden="true"></div>
     <div class="hero-inner">
-      <p class="eyebrow">ANTES DE PUBLICAR</p>
-      <h1>Quanto cobrar<br>numa peça nova</h1>
-      <p class="lede">Pra anúncios que ainda não existem: informe o custo e os percentuais que vão incidir sobre o preço final. A calculadora monta o preço de venda numa conta só — sem etapas separadas, que distorcem o resultado.</p>
+      <p class="eyebrow">CALCULAR PREÇO</p>
+      <h1>Calcular</h1>
+      <p class="lede">Informe custo e taxas. O preço de venda sai na hora.</p>
 
       <div class="calc-card">
         <div class="calc-inputs">
@@ -397,6 +444,47 @@ input:focus{ outline: none; }
           <div class="preco-readout">
             <span class="preco-label">Preço de venda sugerido</span>
             <span class="preco-value" id="precoFinal">R$ 0,00</span>
+          </div>
+
+          <button class="btn-detalhar" id="btnDetalhar" aria-expanded="false" type="button">
+            <span class="btn-detalhar-icone" aria-hidden="true">▸</span>
+            Detalhar cálculo
+          </button>
+
+          <div class="detalhe-calculo" id="detalheCalculo">
+            <h3>Passo a passo do cálculo</h3>
+
+            <div class="passo-calculo">
+              <span class="passo-numero">01</span>
+              <div>
+                <p>Custo total = <strong id="dtCustoLabel">R$ 0,00</strong> + <strong id="dtFreteLabel">R$ 0,00</strong> + <strong id="dtAdicionalRSLabel">R$ 0,00</strong></p>
+                <p class="passo-resultado" id="dtCustoTotal">R$ 0,00</p>
+              </div>
+            </div>
+
+            <div class="passo-calculo">
+              <span class="passo-numero">02</span>
+              <div>
+                <p id="dtPercentuais">Percentuais = <strong>0%</strong> + <strong>0%</strong> + <strong>0%</strong></p>
+                <p class="passo-resultado" id="dtSomaPct">0,0%</p>
+              </div>
+            </div>
+
+            <div class="passo-calculo">
+              <span class="passo-numero">03</span>
+              <div>
+                <p id="dtDivisorLabel">Divisor = 1 − (0,0 ÷ 100)</p>
+                <p class="passo-resultado" id="dtDivisor">0,000</p>
+              </div>
+            </div>
+
+            <div class="passo-calculo">
+              <span class="passo-numero">04</span>
+              <div>
+                <p id="dtPrecoLabel">Preço de venda = R$ 0,00 ÷ 0,000</p>
+                <p class="passo-resultado" id="dtPreco">R$ 0,00</p>
+              </div>
+            </div>
           </div>
 
           <p class="warning" id="calcWarning" hidden></p>
@@ -617,10 +705,10 @@ function calcularPreco() {
   const comissao = numFrom('comissao');
   const adicionalPct = numFrom('adicionalPct');
   const adicionalRS = numFrom('adicionalRS');
- 
+
   const somaPct = margem + comissao + adicionalPct;
   const warningEl = document.getElementById('calcWarning');
- 
+
   if (somaPct >= 100) {
     warningEl.hidden = false;
     warningEl.textContent =
@@ -631,27 +719,52 @@ function calcularPreco() {
       document.getElementById(id).textContent = '—';
     });
     setGauge('gaugeFill1', 'gaugeValue1', 0, true);
+    // limpa detalhamento
+    ['dtCustoLabel','dtFreteLabel','dtAdicionalRSLabel','dtCustoTotal'].forEach(id => {
+      document.getElementById(id).textContent = '—';
+    });
+    document.getElementById('dtPercentuais').innerHTML = 'Percentuais = <strong>—</strong>';
+    document.getElementById('dtSomaPct').textContent = '—';
+    document.getElementById('dtDivisorLabel').innerHTML = 'Divisor = —';
+    document.getElementById('dtDivisor').textContent = '—';
+    document.getElementById('dtPrecoLabel').innerHTML = 'Preço de venda = —';
+    document.getElementById('dtPreco').textContent = '—';
     return;
   }
   warningEl.hidden = true;
- 
+
   const divisor = 1 - somaPct / 100;
   const custoTotal = custo + frete + adicionalRS;
   const preco = custoTotal / divisor;
- 
+
   const comissaoValor = preco * comissao / 100;
   const adicionalValor = preco * adicionalPct / 100;
   const margemValor = preco * margem / 100;
- 
+
   document.getElementById('precoFinal').textContent = fmtBRL(preco);
   document.getElementById('bdCusto').textContent = fmtBRL(custoTotal);
   document.getElementById('bdComissao').textContent = fmtBRL(comissaoValor);
   document.getElementById('bdAdicional').textContent = fmtBRL(adicionalValor);
   document.getElementById('bdMargem').textContent = fmtBRL(margemValor);
- 
-  // Nessa calculadora a margem real é sempre exatamente a margem pedida —
-  // é a garantia do método de divisor único.
+
   setGauge('gaugeFill1', 'gaugeValue1', margem, true);
+
+  // atualiza detalhamento
+  const pctFmt = (n) => n.toFixed(1).replace('.', ',') + '%';
+  const decFmt = (n) => n.toFixed(3).replace('.', ',');
+  document.getElementById('dtCustoLabel').textContent = fmtBRL(custo);
+  document.getElementById('dtFreteLabel').textContent = fmtBRL(frete);
+  document.getElementById('dtAdicionalRSLabel').textContent = fmtBRL(adicionalRS);
+  document.getElementById('dtCustoTotal').textContent = fmtBRL(custoTotal);
+  document.getElementById('dtPercentuais').innerHTML =
+    `Percentuais = <strong>${pctFmt(margem)}</strong> + <strong>${pctFmt(comissao)}</strong> + <strong>${pctFmt(adicionalPct)}</strong>`;
+  document.getElementById('dtSomaPct').textContent = pctFmt(somaPct);
+  document.getElementById('dtDivisorLabel').innerHTML =
+    `Divisor = 1 − (${pctFmt(somaPct)} ÷ 100)`;
+  document.getElementById('dtDivisor').textContent = decFmt(divisor);
+  document.getElementById('dtPrecoLabel').innerHTML =
+    `Preço de venda = ${fmtBRL(custoTotal)} ÷ ${decFmt(divisor)}`;
+  document.getElementById('dtPreco').textContent = fmtBRL(preco);
 }
  
 /* ============================================================
@@ -698,7 +811,15 @@ function calcularConferencia() {
    ============================================================ */
 document.querySelectorAll('#calculadora input').forEach(el => el.addEventListener('input', calcularPreco));
 document.querySelectorAll('#conferir input').forEach(el => el.addEventListener('input', calcularConferencia));
- 
+
+document.getElementById('btnDetalhar').addEventListener('click', function() {
+  const btn = this;
+  const detalhe = document.getElementById('detalheCalculo');
+  const isOpen = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', !isOpen);
+  detalhe.classList.toggle('aberto', !isOpen);
+});
+
 calcularPreco();
 calcularConferencia();
  
