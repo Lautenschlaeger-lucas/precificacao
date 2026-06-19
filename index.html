@@ -303,34 +303,127 @@ input:focus{ outline: none; }
  
 <header class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="#conferir">
+    <a class="brand" href="#calculadora">
       <span class="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/></svg>
       </span>
       <span class="brand-text">Painel de Preços <em>· interno</em></span>
     </a>
     <nav class="topnav">
+      <a href="#calculadora">Anúncios a publicar</a>
       <a href="#conferir">Anúncios publicados</a>
       <a href="#como-funciona">Como funciona</a>
-      <a href="#calculadora">Anúncios a publicar</a>
     </nav>
   </div>
 </header>
  
 <main>
  
-  <!-- ============ HERO / ANÚNCIOS PUBLICADOS ============ -->
-  <section id="conferir" class="painel hero">
+  <!-- ============ CALCULADORA ============ -->
+  <section id="calculadora" class="painel hero">
+    <div class="painel-grid-bg" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="eyebrow">ANTES DE PUBLICAR</p>
+      <h1>Quanto cobrar<br>numa peça nova</h1>
+      <p class="lede">Pra anúncios que ainda não existem: informe o custo e os percentuais que vão incidir sobre o preço final. A calculadora monta o preço de venda numa conta só — sem etapas separadas, que distorcem o resultado.</p>
+
+      <div class="calc-card">
+        <div class="calc-inputs">
+          <h2 class="card-kicker">Dados de entrada</h2>
+
+          <label class="field">
+            <span>Preço de custo</span>
+            <div class="input-prefix">
+              <span>R$</span>
+              <input id="custo" type="number" inputmode="decimal" step="0.01" min="0" value="483.07">
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Frete pago por nós</span>
+            <div class="input-prefix">
+              <span>R$</span>
+              <input id="frete" type="number" inputmode="decimal" step="0.01" min="0" value="0">
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Margem de lucro desejada</span>
+            <div class="input-suffix">
+              <input id="margem" type="number" inputmode="decimal" step="0.1" min="0" value="30">
+              <span>%</span>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Comissão do Mercado Livre</span>
+            <div class="input-suffix">
+              <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0" value="19">
+              <span>%</span>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Adicional da plataforma</span>
+            <div class="input-suffix">
+              <input id="adicionalPct" type="number" inputmode="decimal" step="0.1" min="0" value="8">
+              <span>%</span>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Adicional fixo</span>
+            <div class="input-prefix">
+              <span>R$</span>
+              <input id="adicionalRS" type="number" inputmode="decimal" step="0.01" min="0" value="0">
+            </div>
+          </label>
+        </div>
+
+        <div class="calc-output">
+          <h2 class="card-kicker">Resultado</h2>
+
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 220 130" class="gauge" aria-hidden="true">
+              <path class="gauge-track" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100"/>
+              <path class="gauge-fill gauge-fill--good" id="gaugeFill1" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100" stroke-dasharray="0 100"/>
+            </svg>
+            <div class="gauge-center">
+              <span class="gauge-value" id="gaugeValue1">30,0%</span>
+              <span class="gauge-label">margem real</span>
+            </div>
+          </div>
+
+          <div class="preco-readout">
+            <span class="preco-label">Preço de venda sugerido</span>
+            <span class="preco-value" id="precoFinal">R$ 0,00</span>
+          </div>
+
+          <p class="warning" id="calcWarning" hidden></p>
+
+          <ul class="breakdown">
+            <li><span class="swatch s-custo" aria-hidden="true"></span>Custo total <span id="bdCusto">R$ 0,00</span></li>
+            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão ML <span id="bdComissao">R$ 0,00</span></li>
+            <li><span class="swatch s-adicional" aria-hidden="true"></span>Adicional <span id="bdAdicional">R$ 0,00</span></li>
+            <li><span class="swatch s-margem" aria-hidden="true"></span>Margem (lucro) <span id="bdMargem">R$ 0,00</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONFERIR ============ -->
+  <section id="conferir" class="painel painel-secundario">
     <div class="painel-grid-bg" aria-hidden="true"></div>
     <div class="hero-inner">
       <p class="eyebrow">PAINEL DE PRECIFICAÇÃO · ANÚNCIOS PUBLICADOS</p>
-      <h1>Esse anúncio está<br>com a margem certa?</h1>
+      <h2>Esse anúncio está com a margem certa?</h2>
       <p class="lede">Cole o preço de venda atual e o custo. A calculadora mostra a margem real que esse anúncio está entregando agora — pra revisar o que já está no ar.</p>
- 
+
       <div class="calc-card">
         <div class="calc-inputs">
           <h2 class="card-kicker">Dados do anúncio</h2>
- 
+
           <label class="field">
             <span>Preço de venda atual</span>
             <div class="input-prefix">
@@ -338,7 +431,7 @@ input:focus{ outline: none; }
               <input id="pvAtual" type="number" inputmode="decimal" step="0.01" min="0" value="1499.00">
             </div>
           </label>
- 
+
           <label class="field">
             <span>Preço de custo</span>
             <div class="input-prefix">
@@ -346,7 +439,7 @@ input:focus{ outline: none; }
               <input id="pvCusto" type="number" inputmode="decimal" step="0.01" min="0" value="483.07">
             </div>
           </label>
- 
+
           <label class="field">
             <span>Frete pago por nós</span>
             <div class="input-prefix">
@@ -354,7 +447,7 @@ input:focus{ outline: none; }
               <input id="pvFrete" type="number" inputmode="decimal" step="0.01" min="0" value="0">
             </div>
           </label>
- 
+
           <label class="field">
             <span>Comissão do Mercado Livre</span>
             <div class="input-suffix">
@@ -362,7 +455,7 @@ input:focus{ outline: none; }
               <span>%</span>
             </div>
           </label>
- 
+
           <label class="field">
             <span>Adicional da plataforma</span>
             <div class="input-suffix">
@@ -370,7 +463,7 @@ input:focus{ outline: none; }
               <span>%</span>
             </div>
           </label>
- 
+
           <label class="field">
             <span>Adicional fixo</span>
             <div class="input-prefix">
@@ -378,7 +471,7 @@ input:focus{ outline: none; }
               <input id="pvAdicionalRS" type="number" inputmode="decimal" step="0.01" min="0" value="0">
             </div>
           </label>
- 
+
           <label class="field">
             <span>Meta de margem</span>
             <div class="input-suffix">
@@ -387,10 +480,10 @@ input:focus{ outline: none; }
             </div>
           </label>
         </div>
- 
+
         <div class="calc-output">
           <h2 class="card-kicker">Resultado</h2>
- 
+
           <div class="gauge-wrap">
             <svg viewBox="0 0 220 130" class="gauge" aria-hidden="true">
               <path class="gauge-track" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100"/>
@@ -401,9 +494,9 @@ input:focus{ outline: none; }
               <span class="gauge-label">margem real</span>
             </div>
           </div>
- 
+
           <div class="status-badge" id="statusBadge">—</div>
- 
+
           <ul class="breakdown">
             <li><span class="swatch s-custo" aria-hidden="true"></span>Custo total <span id="pvBdCusto">R$ 0,00</span></li>
             <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão ML <span id="pvBdComissao">R$ 0,00</span></li>
@@ -487,100 +580,7 @@ input:focus{ outline: none; }
       </ol>
     </div>
   </section>
- 
-  <!-- ============ ANÚNCIOS A PUBLICAR ============ -->
-  <section id="calculadora" class="painel painel-secundario">
-    <div class="painel-grid-bg" aria-hidden="true"></div>
-    <div class="hero-inner">
-      <p class="eyebrow">ANTES DE PUBLICAR</p>
-      <h2>Quanto cobrar numa peça nova</h2>
-      <p class="lede">Pra anúncios que ainda não existem: informe o custo e os percentuais que vão incidir sobre o preço final. A calculadora monta o preço de venda numa conta só — sem etapas separadas, que distorcem o resultado.</p>
- 
-      <div class="calc-card">
-        <div class="calc-inputs">
-          <h2 class="card-kicker">Dados de entrada</h2>
- 
-          <label class="field">
-            <span>Preço de custo</span>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input id="custo" type="number" inputmode="decimal" step="0.01" min="0" value="483.07">
-            </div>
-          </label>
- 
-          <label class="field">
-            <span>Frete pago por nós</span>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input id="frete" type="number" inputmode="decimal" step="0.01" min="0" value="0">
-            </div>
-          </label>
- 
-          <label class="field">
-            <span>Margem de lucro desejada</span>
-            <div class="input-suffix">
-              <input id="margem" type="number" inputmode="decimal" step="0.1" min="0" value="30">
-              <span>%</span>
-            </div>
-          </label>
- 
-          <label class="field">
-            <span>Comissão do Mercado Livre</span>
-            <div class="input-suffix">
-              <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0" value="19">
-              <span>%</span>
-            </div>
-          </label>
- 
-          <label class="field">
-            <span>Adicional da plataforma</span>
-            <div class="input-suffix">
-              <input id="adicionalPct" type="number" inputmode="decimal" step="0.1" min="0" value="8">
-              <span>%</span>
-            </div>
-          </label>
- 
-          <label class="field">
-            <span>Adicional fixo</span>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input id="adicionalRS" type="number" inputmode="decimal" step="0.01" min="0" value="0">
-            </div>
-          </label>
-        </div>
- 
-        <div class="calc-output">
-          <h2 class="card-kicker">Resultado</h2>
- 
-          <div class="gauge-wrap">
-            <svg viewBox="0 0 220 130" class="gauge" aria-hidden="true">
-              <path class="gauge-track" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100"/>
-              <path class="gauge-fill gauge-fill--good" id="gaugeFill1" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100" stroke-dasharray="0 100"/>
-            </svg>
-            <div class="gauge-center">
-              <span class="gauge-value" id="gaugeValue1">30,0%</span>
-              <span class="gauge-label">margem real</span>
-            </div>
-          </div>
- 
-          <div class="preco-readout">
-            <span class="preco-label">Preço de venda sugerido</span>
-            <span class="preco-value" id="precoFinal">R$ 0,00</span>
-          </div>
- 
-          <p class="warning" id="calcWarning" hidden></p>
- 
-          <ul class="breakdown">
-            <li><span class="swatch s-custo" aria-hidden="true"></span>Custo total <span id="bdCusto">R$ 0,00</span></li>
-            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão ML <span id="bdComissao">R$ 0,00</span></li>
-            <li><span class="swatch s-adicional" aria-hidden="true"></span>Adicional <span id="bdAdicional">R$ 0,00</span></li>
-            <li><span class="swatch s-margem" aria-hidden="true"></span>Margem (lucro) <span id="bdMargem">R$ 0,00</span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
- 
+
 </main>
  
 <footer class="rodape">
