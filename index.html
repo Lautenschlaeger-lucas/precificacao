@@ -428,7 +428,8 @@ input:focus{ outline: none; }
           <label class="field">
             <span>Marketplace</span>
             <select class="mp-select" id="calcMp" autocomplete="off">
-              <option value="mercadolivre">Mercado Livre</option>
+              <option value="mlclassico">Mercado Livre (Clássico)</option>
+              <option value="mlpremium">Mercado Livre (Premium)</option>
               <option value="shopee">Shopee</option>
               <option value="amazon">Amazon</option>
               <option value="magalu">Magazine Luiza</option>
@@ -577,7 +578,8 @@ input:focus{ outline: none; }
           <label class="field">
             <span>Marketplace</span>
             <select class="mp-select" id="pvMp" autocomplete="off">
-              <option value="mercadolivre">Mercado Livre</option>
+              <option value="mlclassico">Mercado Livre (Clássico)</option>
+              <option value="mlpremium">Mercado Livre (Premium)</option>
               <option value="shopee">Shopee</option>
               <option value="amazon">Amazon</option>
               <option value="magalu">Magazine Luiza</option>
@@ -757,10 +759,17 @@ input:focus{ outline: none; }
    Marketplace config
    ============================================================ */
 const MARKETPLACES = {
-  mercadolivre: {
-    nome: 'Mercado Livre',
+  mlclassico: {
+    nome: 'Mercado Livre (Clássico)',
+    comissao: 14, adicionalPct: 8, adicionalRS: 0,
+    labelComissao: 'Comissão do ML Clássico',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  mlpremium: {
+    nome: 'Mercado Livre (Premium)',
     comissao: 19, adicionalPct: 8, adicionalRS: 0,
-    labelComissao: 'Comissão do Mercado Livre',
+    labelComissao: 'Comissão do ML Premium',
     labelAdicional: 'Adicional da plataforma',
     labelAdicionalRS: 'Adicional fixo'
   },
