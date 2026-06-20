@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Preços — Uso Interno</title>
+<title>Calculadora de Preços — Uso Implantação</title>
 <meta name="description" content="Calculadora interna de precificação por markup divisor — custo, margem, comissão e taxas em uma conta só.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231A1D1F'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23FF6A1A' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%233E6E8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,7 +152,7 @@ h1{ font-size: clamp(2.1rem, 4.4vw, 3.4rem); line-height: 1.05; max-width: 16ch;
   font-size: .76rem; letter-spacing: .1em; text-transform: uppercase;
   color: var(--texto-painel-mudo); margin: 0 0 18px;
 }
- 
+
 .field{ display:block; margin-bottom: 16px; }
 .field span:first-child{ display:block; font-size: .86rem; color: var(--texto-painel-mudo); margin-bottom: 6px; }
 .input-prefix, .input-suffix{
@@ -178,6 +178,53 @@ input[type="number"]{ -moz-appearance: textfield; }
 input:focus{ outline: none; }
 .input-prefix:focus-within, .input-suffix:focus-within{
   border-color: var(--ciano);
+}
+
+/* marketplace select */
+.mp-select{
+  width:100%;
+  background: var(--painel-bg);
+  border: 1px solid var(--painel-linha);
+  border-radius: 6px;
+  color: var(--texto-painel);
+  font-family: var(--fonte-dado);
+  font-size: .95rem;
+  padding: 11px 10px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2364748B' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 34px;
+}
+.mp-select:focus{ outline: none; border-color: var(--ciano); }
+.mp-select option{ background: var(--painel-bg); color: var(--texto-painel); }
+
+/* tier badge */
+.tier-badge{
+  display:none;
+  font-family: var(--fonte-dado);
+  font-size: .78rem;
+  padding: 7px 14px;
+  border-radius: 100px;
+  margin: 4px 0 16px;
+  width: fit-content;
+  border: 1px solid var(--painel-linha);
+  color: var(--texto-painel-mudo);
+  background: var(--painel-bg);
+  gap: 8px;
+  align-items: center;
+}
+.tier-badge.ativo{ display: inline-flex; }
+.tier-badge .tag{
+  background: var(--ciano-escuro);
+  color: #fff;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 100px;
+  font-size: .7rem;
+  letter-spacing: .04em;
 }
  
 /* gauge */
@@ -379,6 +426,21 @@ input:focus{ outline: none; }
           <h2 class="card-kicker">Dados de entrada</h2>
 
           <label class="field">
+            <span>Marketplace</span>
+            <select class="mp-select" id="calcMp" autocomplete="off">
+              <option value="mercadolivre">Mercado Livre</option>
+              <option value="shopee">Shopee</option>
+              <option value="amazon">Amazon</option>
+              <option value="magalu">Magazine Luiza</option>
+            </select>
+          </label>
+
+          <div class="tier-badge" id="calcTierBadge">
+            <span class="tag"></span>
+            <span class="info"></span>
+          </div>
+
+          <label class="field">
             <span>Preço de custo</span>
             <div class="input-prefix">
               <span>R$</span>
@@ -491,7 +553,7 @@ input:focus{ outline: none; }
 
           <ul class="breakdown">
             <li><span class="swatch s-custo" aria-hidden="true"></span>Custo total <span id="bdCusto">R$ 0,00</span></li>
-            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão ML <span id="bdComissao">R$ 0,00</span></li>
+            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão <span id="bdComissao">R$ 0,00</span></li>
             <li><span class="swatch s-adicional" aria-hidden="true"></span>Adicional <span id="bdAdicional">R$ 0,00</span></li>
             <li><span class="swatch s-margem" aria-hidden="true"></span>Margem (lucro) <span id="bdMargem">R$ 0,00</span></li>
           </ul>
@@ -511,6 +573,21 @@ input:focus{ outline: none; }
       <div class="calc-card">
         <div class="calc-inputs">
           <h2 class="card-kicker">Dados do anúncio</h2>
+
+          <label class="field">
+            <span>Marketplace</span>
+            <select class="mp-select" id="pvMp" autocomplete="off">
+              <option value="mercadolivre">Mercado Livre</option>
+              <option value="shopee">Shopee</option>
+              <option value="amazon">Amazon</option>
+              <option value="magalu">Magazine Luiza</option>
+            </select>
+          </label>
+
+          <div class="tier-badge" id="pvTierBadge">
+            <span class="tag"></span>
+            <span class="info"></span>
+          </div>
 
           <label class="field">
             <span>Preço de venda atual</span>
@@ -587,7 +664,7 @@ input:focus{ outline: none; }
 
           <ul class="breakdown">
             <li><span class="swatch s-custo" aria-hidden="true"></span>Custo total <span id="pvBdCusto">R$ 0,00</span></li>
-            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão ML <span id="pvBdComissao">R$ 0,00</span></li>
+            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão <span id="pvBdComissao">R$ 0,00</span></li>
             <li><span class="swatch s-adicional" aria-hidden="true"></span>Adicional <span id="pvBdAdicional">R$ 0,00</span></li>
             <li><span class="swatch s-margem" aria-hidden="true"></span>Lucro líquido <span id="pvBdLucro">R$ 0,00</span></li>
           </ul>
@@ -677,37 +754,213 @@ input:focus{ outline: none; }
  
 <script>
 /* ============================================================
-   Helpers de formatação
+   Marketplace config
    ============================================================ */
-const fmtBRL = (n) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
-const fmtPct = (n) => n.toFixed(1).replace('.', ',') + '%';
-const numFrom = (id) => parseFloat(document.getElementById(id).value.replace(',', '.')) || 0;
- 
-const GAUGE_MAX = 60; // escala do mostrador: 0% a 60% de margem
- 
+const MARKETPLACES = {
+  mercadolivre: {
+    nome: 'Mercado Livre',
+    comissao: 19, adicionalPct: 8, adicionalRS: 0,
+    labelComissao: 'Comissão do Mercado Livre',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  shopee: {
+    nome: 'Shopee',
+    comissao: 14, adicionalPct: 0, adicionalRS: 26,
+    labelComissao: 'Comissão (por faixa)',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Tarifa fixa por item',
+    tipo: 'faixas',
+    faixas: [
+      { id: 1, min: 0,     max: 7.99,   comissao: 50, tarifa: 0  },
+      { id: 2, min: 8,     max: 79.99,  comissao: 20, tarifa: 4  },
+      { id: 3, min: 80,    max: 99.99,  comissao: 14, tarifa: 16 },
+      { id: 4, min: 100,   max: 199.99, comissao: 14, tarifa: 20 },
+      { id: 5, min: 200,   max: 1/0,    comissao: 14, tarifa: 26 }
+    ]
+  },
+  amazon: {
+    nome: 'Amazon',
+    comissao: 15, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão da Amazon',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  magalu: {
+    nome: 'Magazine Luiza',
+    comissao: 18, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão do Magalu',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  }
+};
+
+const SHOPEE = MARKETPLACES.shopee;
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+const fmtBRL = n => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
+const fmtPct = n => n.toFixed(1).replace('.', ',') + '%';
+const numFrom = id => parseFloat(document.getElementById(id).value.replace(',', '.')) || 0;
+
+const GAUGE_MAX = 60;
+
 function setGauge(fillId, valueId, marginPct, isGood) {
   const fill = document.getElementById(fillId);
-  const valueEl = document.getElementById(valueId);
   const clamped = Math.max(0, Math.min(GAUGE_MAX, marginPct));
   const pct = (clamped / GAUGE_MAX) * 100;
   fill.setAttribute('stroke-dasharray', `${pct} 100`);
   fill.classList.toggle('gauge-fill--good', !!isGood);
-  valueEl.textContent = fmtPct(marginPct);
+  document.getElementById(valueId).textContent = fmtPct(marginPct);
 }
- 
+
+const pctFmt = n => n.toFixed(1).replace('.', ',') + '%';
+const decFmt = n => n.toFixed(3).replace('.', ',');
+
+/* ============================================================
+   Shopee helpers
+   ============================================================ */
+function shopeeTier(preco) {
+  return SHOPEE.faixas.find(f => preco >= f.min && preco <= f.max) || SHOPEE.faixas[SHOPEE.faixas.length - 1];
+}
+
+function shopeeCalcular(custoBase, margem) {
+  const faixas = SHOPEE.faixas;
+
+  for (const faixa of faixas) {
+    const soma = margem + faixa.comissao;
+    if (soma >= 100) continue;
+    const d = 1 - soma / 100;
+    if (d <= 0) continue;
+    const preco = (custoBase + faixa.tarifa) / d;
+    if (preco >= faixa.min && preco <= faixa.max)
+      return { preco, faixa };
+  }
+
+  let faixa = faixas[2];
+  for (let i = 0; i < 10; i++) {
+    const soma = margem + faixa.comissao;
+    if (soma >= 100) { faixa = faixas[faixas.length - 1]; continue; }
+    const d = 1 - soma / 100;
+    if (d <= 0) break;
+    const preco = (custoBase + faixa.tarifa) / d;
+    const nova = shopeeTier(preco);
+    if (nova === faixa) return { preco, faixa };
+    faixa = nova;
+  }
+
+  faixa = faixas[faixas.length - 1];
+  const preco = (custoBase + faixa.tarifa) / (1 - (margem + faixa.comissao) / 100);
+  return { preco, faixa };
+}
+
+function atualizarTierBadge(badgeId, tagId, infoId, tier) {
+  const badge = document.getElementById(badgeId);
+  if (!tier) { badge.classList.remove('ativo'); return; }
+  badge.classList.add('ativo');
+  document.getElementById(tagId).textContent = `Faixa ${tier.id}`;
+  document.getElementById(infoId).textContent = `${tier.comissao}% + R$ ${tier.tarifa.toFixed(2).replace('.', ',')}`;
+}
+
+/* ============================================================
+   Aplicar configuração do marketplace nos campos
+   ============================================================ */
+function aplicarMP(mpId, prefix) {
+  const mp = document.getElementById(mpId).value;
+  const cfg = MARKETPLACES[mp];
+  const isPv = prefix === 'pv';
+
+  const comEl = document.getElementById(isPv ? 'pvComissao' : 'comissao');
+  const adicPctEl = document.getElementById(isPv ? 'pvAdicionalPct' : 'adicionalPct');
+  const adicRSEl = document.getElementById(isPv ? 'pvAdicionalRS' : 'adicionalRS');
+  const labelCom = comEl.closest('.field').querySelector('span:first-child');
+  const labelAdic = adicPctEl.closest('.field').querySelector('span:first-child');
+  const labelAdicRS = adicRSEl.closest('.field').querySelector('span:first-child');
+
+  labelCom.textContent = cfg.labelComissao;
+  labelAdic.textContent = cfg.labelAdicional;
+  labelAdicRS.textContent = cfg.labelAdicionalRS;
+
+  comEl.value = cfg.comissao;
+  adicPctEl.value = cfg.adicionalPct;
+  adicRSEl.value = cfg.adicionalRS;
+
+  if (cfg.tipo === 'faixas') {
+    adicPctEl.disabled = true;
+    adicRSEl.disabled = true;
+  } else {
+    adicPctEl.disabled = false;
+    adicRSEl.disabled = false;
+  }
+}
+
 /* ============================================================
    Calculadora 1 — preço sugerido a partir do custo
    ============================================================ */
 function calcularPreco() {
+  const mp = document.getElementById('calcMp').value;
+  const cfg = MARKETPLACES[mp];
+  const isShopee = mp === 'shopee';
+
   const custo = numFrom('custo');
   const frete = numFrom('frete');
   const margem = numFrom('margem');
-  const comissao = numFrom('comissao');
-  const adicionalPct = numFrom('adicionalPct');
-  const adicionalRS = numFrom('adicionalRS');
+  const comissao = isShopee ? 0 : numFrom('comissao');
+  const adicionalPct = isShopee ? 0 : numFrom('adicionalPct');
+  const adicionalRS = isShopee ? 0 : numFrom('adicionalRS');
 
-  const somaPct = margem + comissao + adicionalPct;
   const warningEl = document.getElementById('calcWarning');
+
+  if (isShopee) {
+    const custoBase = custo + frete;
+    const result = shopeeCalcular(custoBase, margem);
+
+    if (!result || result.preco <= 0) {
+      warningEl.hidden = false;
+      warningEl.textContent = 'Não foi possível calcular com a margem desejada. Reduza a margem ou verifique os dados.';
+      document.getElementById('precoFinal').textContent = '—';
+      ['bdCusto','bdComissao','bdAdicional','bdMargem'].forEach(id =>
+        document.getElementById(id).textContent = '—');
+      setGauge('gaugeFill1','gaugeValue1',0,true);
+      document.getElementById('calcTierBadge').classList.remove('ativo');
+      return;
+    }
+
+    warningEl.hidden = true;
+    const { preco, faixa } = result;
+    const comV = preco * faixa.comissao / 100;
+    const margemV = preco * margem / 100;
+
+    document.getElementById('precoFinal').textContent = fmtBRL(preco);
+    document.getElementById('bdCusto').textContent = fmtBRL(custoBase);
+    document.getElementById('bdComissao').textContent = fmtBRL(comV);
+    document.getElementById('bdAdicional').textContent = fmtBRL(faixa.tarifa);
+    document.getElementById('bdMargem').textContent = fmtBRL(margemV);
+
+    setGauge('gaugeFill1','gaugeValue1',margem,true);
+
+    atualizarTierBadge('calcTierBadge','calcTierTag','calcTierInfo',faixa);
+
+    const dtCustoTotal = custoBase + faixa.tarifa;
+    document.getElementById('dtCustoLabel').textContent = fmtBRL(custo);
+    document.getElementById('dtFreteLabel').textContent = fmtBRL(frete);
+    document.getElementById('dtAdicionalRSLabel').textContent = fmtBRL(faixa.tarifa);
+    document.getElementById('dtCustoTotal').textContent = fmtBRL(dtCustoTotal);
+    document.getElementById('dtPercentuais').innerHTML =
+      `Percentuais = <strong>${pctFmt(margem)}</strong> + <strong>${pctFmt(faixa.comissao)}</strong> + <strong>0,0%</strong> (adicional incluso na tarifa fixa)`;
+    document.getElementById('dtSomaPct').textContent = pctFmt(margem + faixa.comissao);
+    document.getElementById('dtDivisorLabel').innerHTML =
+      `Divisor = 1 − (${pctFmt(margem + faixa.comissao)} ÷ 100)`;
+    document.getElementById('dtDivisor').textContent = decFmt(1 - (margem + faixa.comissao) / 100);
+    document.getElementById('dtPrecoLabel').innerHTML =
+      `Preço de venda = ${fmtBRL(dtCustoTotal)} ÷ ${decFmt(1 - (margem + faixa.comissao) / 100)}`;
+    document.getElementById('dtPreco').textContent = fmtBRL(preco);
+    return;
+  }
+
+  // Marketplace simples (percentual)
+  const somaPct = margem + comissao + adicionalPct;
 
   if (somaPct >= 100) {
     warningEl.hidden = false;
@@ -715,43 +968,35 @@ function calcularPreco() {
       `Margem + comissão + adicional somam ${somaPct.toFixed(1).replace('.', ',')}%. ` +
       `Isso é 100% ou mais do preço de venda — não existe preço que cubra isso. Reduza algum percentual.`;
     document.getElementById('precoFinal').textContent = '—';
-    ['bdCusto', 'bdComissao', 'bdAdicional', 'bdMargem'].forEach(id => {
-      document.getElementById(id).textContent = '—';
-    });
-    setGauge('gaugeFill1', 'gaugeValue1', 0, true);
-    // limpa detalhamento
-    ['dtCustoLabel','dtFreteLabel','dtAdicionalRSLabel','dtCustoTotal'].forEach(id => {
-      document.getElementById(id).textContent = '—';
-    });
+    ['bdCusto','bdComissao','bdAdicional','bdMargem'].forEach(id =>
+      document.getElementById(id).textContent = '—');
+    setGauge('gaugeFill1','gaugeValue1',0,true);
+    ['dtCustoLabel','dtFreteLabel','dtAdicionalRSLabel','dtCustoTotal'].forEach(id =>
+      document.getElementById(id).textContent = '—');
     document.getElementById('dtPercentuais').innerHTML = 'Percentuais = <strong>—</strong>';
     document.getElementById('dtSomaPct').textContent = '—';
     document.getElementById('dtDivisorLabel').innerHTML = 'Divisor = —';
     document.getElementById('dtDivisor').textContent = '—';
     document.getElementById('dtPrecoLabel').innerHTML = 'Preço de venda = —';
     document.getElementById('dtPreco').textContent = '—';
+    document.getElementById('calcTierBadge').classList.remove('ativo');
     return;
   }
   warningEl.hidden = true;
+  document.getElementById('calcTierBadge').classList.remove('ativo');
 
   const divisor = 1 - somaPct / 100;
   const custoTotal = custo + frete + adicionalRS;
   const preco = custoTotal / divisor;
 
-  const comissaoValor = preco * comissao / 100;
-  const adicionalValor = preco * adicionalPct / 100;
-  const margemValor = preco * margem / 100;
-
   document.getElementById('precoFinal').textContent = fmtBRL(preco);
   document.getElementById('bdCusto').textContent = fmtBRL(custoTotal);
-  document.getElementById('bdComissao').textContent = fmtBRL(comissaoValor);
-  document.getElementById('bdAdicional').textContent = fmtBRL(adicionalValor);
-  document.getElementById('bdMargem').textContent = fmtBRL(margemValor);
+  document.getElementById('bdComissao').textContent = fmtBRL(preco * comissao / 100);
+  document.getElementById('bdAdicional').textContent = fmtBRL(preco * adicionalPct / 100);
+  document.getElementById('bdMargem').textContent = fmtBRL(preco * margem / 100);
 
-  setGauge('gaugeFill1', 'gaugeValue1', margem, true);
+  setGauge('gaugeFill1','gaugeValue1',margem,true);
 
-  // atualiza detalhamento
-  const pctFmt = (n) => n.toFixed(1).replace('.', ',') + '%';
-  const decFmt = (n) => n.toFixed(3).replace('.', ',');
   document.getElementById('dtCustoLabel').textContent = fmtBRL(custo);
   document.getElementById('dtFreteLabel').textContent = fmtBRL(frete);
   document.getElementById('dtAdicionalRSLabel').textContent = fmtBRL(adicionalRS);
@@ -766,35 +1011,52 @@ function calcularPreco() {
     `Preço de venda = ${fmtBRL(custoTotal)} ÷ ${decFmt(divisor)}`;
   document.getElementById('dtPreco').textContent = fmtBRL(preco);
 }
- 
+
 /* ============================================================
    Calculadora 2 — conferir um anúncio existente
    ============================================================ */
 function calcularConferencia() {
+  const mp = document.getElementById('pvMp').value;
+  const cfg = MARKETPLACES[mp];
+  const isShopee = mp === 'shopee';
+
   const pvAtual = numFrom('pvAtual');
   const pvCusto = numFrom('pvCusto');
   const pvFrete = numFrom('pvFrete');
-  const pvComissao = numFrom('pvComissao');
-  const pvAdicionalPct = numFrom('pvAdicionalPct');
-  const pvAdicionalRS = numFrom('pvAdicionalRS');
+  const pvComissao = isShopee ? 0 : numFrom('pvComissao');
+  const pvAdicionalPct = isShopee ? 0 : numFrom('pvAdicionalPct');
+  const pvAdicionalRS = isShopee ? 0 : numFrom('pvAdicionalRS');
   const pvMeta = numFrom('pvMeta');
- 
-  const custoTotal = pvCusto + pvFrete + pvAdicionalRS;
-  const comissaoValor = pvAtual * pvComissao / 100;
-  const adicionalValor = pvAtual * pvAdicionalPct / 100;
-  const lucro = pvAtual - comissaoValor - adicionalValor - custoTotal;
-  const margemReal = pvAtual > 0 ? (lucro / pvAtual) * 100 : 0;
- 
+
+  let comissaoValor, adicionalValor, custoTotal, margemReal;
+
+  if (isShopee && pvAtual > 0) {
+    const faixa = shopeeTier(pvAtual);
+    comissaoValor = pvAtual * faixa.comissao / 100;
+    adicionalValor = faixa.tarifa;
+    custoTotal = pvCusto + pvFrete;
+    const lucro = pvAtual - comissaoValor - faixa.tarifa - custoTotal;
+    margemReal = (lucro / pvAtual) * 100;
+    atualizarTierBadge('pvTierBadge','pvTierTag','pvTierInfo',faixa);
+  } else {
+    document.getElementById('pvTierBadge').classList.remove('ativo');
+    custoTotal = pvCusto + pvFrete + pvAdicionalRS;
+    comissaoValor = pvAtual * pvComissao / 100;
+    adicionalValor = pvAtual * pvAdicionalPct / 100;
+    const lucro = pvAtual - comissaoValor - adicionalValor - custoTotal;
+    margemReal = pvAtual > 0 ? (lucro / pvAtual) * 100 : 0;
+  }
+
   document.getElementById('pvBdCusto').textContent = fmtBRL(custoTotal);
   document.getElementById('pvBdComissao').textContent = fmtBRL(comissaoValor);
   document.getElementById('pvBdAdicional').textContent = fmtBRL(adicionalValor);
-  document.getElementById('pvBdLucro').textContent = fmtBRL(lucro);
- 
+  document.getElementById('pvBdLucro').textContent = fmtBRL(pvAtual - comissaoValor - adicionalValor - custoTotal);
+
   const atingeMeta = margemReal >= pvMeta - 0.05;
-  setGauge('gaugeFill2', 'gaugeValue2', margemReal, atingeMeta);
- 
+  setGauge('gaugeFill2','gaugeValue2',margemReal,atingeMeta);
+
   const badge = document.getElementById('statusBadge');
-  badge.classList.remove('bom', 'ruim');
+  badge.classList.remove('bom','ruim');
   if (pvAtual <= 0) {
     badge.textContent = 'Informe o preço de venda';
   } else if (atingeMeta) {
@@ -805,12 +1067,20 @@ function calcularConferencia() {
     badge.textContent = 'Abaixo da meta';
   }
 }
- 
+
 /* ============================================================
    Listeners
    ============================================================ */
 document.querySelectorAll('#calculadora input').forEach(el => el.addEventListener('input', calcularPreco));
 document.querySelectorAll('#conferir input').forEach(el => el.addEventListener('input', calcularConferencia));
+document.getElementById('calcMp').addEventListener('change', function() {
+  aplicarMP('calcMp','');
+  calcularPreco();
+});
+document.getElementById('pvMp').addEventListener('change', function() {
+  aplicarMP('pvMp','pv');
+  calcularConferencia();
+});
 
 document.getElementById('btnDetalhar').addEventListener('click', function() {
   const btn = this;
@@ -820,9 +1090,11 @@ document.getElementById('btnDetalhar').addEventListener('click', function() {
   detalhe.classList.toggle('aberto', !isOpen);
 });
 
+aplicarMP('calcMp','');
+aplicarMP('pvMp','pv');
 calcularPreco();
 calcularConferencia();
- 
+
 </script>
 </body>
 </html>
