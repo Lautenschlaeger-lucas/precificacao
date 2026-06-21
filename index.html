@@ -19,34 +19,35 @@
   --painel-linha: #1E293B;
   --texto-painel: #E2E8F0;
   --texto-painel-mudo: #64748B;
-  
+
   --manual-papel: #0F172A;
   --manual-tinta: #E2E8F0;
   --manual-tinta-mudo: #94A3B8;
   --manual-linha: #1E293B;
-  
+
   --ciano: #06B6D4;
   --ciano-escuro: #0891B2;
   --azul: #3B82F6;
   --azul-claro: #60A5FA;
   --verde: #22C55E;
+  --verde-pix: #10B981;
   --danger: #EF4444;
   --cinza-dado: #475569;
-  
+
   --fonte-display: "Space Grotesk", sans-serif;
   --fonte-corpo: "DM Sans", sans-serif;
   --fonte-dado: "IBM Plex Mono", monospace;
-  
+
   --raio: 10px;
 }
- 
+
 *{ box-sizing: border-box; }
 html{ scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior: auto; }
   *{ animation: none !important; transition: none !important; }
 }
- 
+
 body{
   margin:0;
   background: var(--manual-papel);
@@ -54,18 +55,14 @@ body{
   font-family: var(--fonte-corpo);
   line-height: 1.5;
 }
- 
+
 h1,h2,h3{ font-family: var(--fonte-display); font-weight: 800; letter-spacing: 0.01em; margin: 0 0 .4em; }
 p{ margin: 0 0 1em; }
 code{ font-family: var(--fonte-dado); }
- 
 a{ color: inherit; }
- 
-:focus-visible{
-  outline: 3px solid var(--ciano);
-  outline-offset: 2px;
-}
- 
+
+:focus-visible{ outline: 3px solid var(--ciano); outline-offset: 2px; }
+
 /* ============================================================
    TOPBAR
    ============================================================ */
@@ -89,9 +86,9 @@ a{ color: inherit; }
   padding: 6px 2px; border-bottom: 2px solid transparent;
 }
 .topnav a:hover{ color: var(--texto-painel); border-bottom-color: var(--ciano); }
- 
+
 /* ============================================================
-   PAINEL (dark dashboard sections)
+   PAINEL
    ============================================================ */
 .painel{
   position: relative;
@@ -104,9 +101,6 @@ a{ color: inherit; }
   position: absolute; inset: 0;
   background: radial-gradient(ellipse at 50% -10%, rgba(6,182,212,.06), transparent 60%);
   pointer-events: none;
-}
-.painel-secundario::before{
-  background: radial-gradient(ellipse at 50% -10%, rgba(59,130,246,.05), transparent 60%);
 }
 .painel-grid-bg{
   position:absolute; inset:0;
@@ -124,15 +118,13 @@ a{ color: inherit; }
 .eyebrow{
   font-family: var(--fonte-dado);
   font-size: .76rem; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--azul-claro);
-  margin: 0 0 16px;
+  color: var(--azul-claro); margin: 0 0 16px;
 }
 .eyebrow-dark{ color: var(--azul); }
 h1{ font-size: clamp(2.1rem, 4.4vw, 3.4rem); line-height: 1.05; max-width: 16ch; }
 .lede{ max-width: 56ch; color: var(--texto-painel-mudo); font-size: 1.05rem; }
-.painel-secundario .lede{ color: var(--texto-painel-mudo); }
 .painel h2{ font-size: clamp(1.6rem, 3vw, 2.2rem); max-width: 20ch; }
- 
+
 /* ============================================================
    CALC CARD
    ============================================================ */
@@ -154,7 +146,7 @@ h1{ font-size: clamp(2.1rem, 4.4vw, 3.4rem); line-height: 1.05; max-width: 16ch;
 }
 
 .field{ display:block; margin-bottom: 16px; }
-.field span:first-child{ display:block; font-size: .86rem; color: var(--texto-painel-mudo); margin-bottom: 6px; }
+.field-label{ display:block; font-size: .86rem; color: var(--texto-painel-mudo); margin-bottom: 6px; }
 .input-prefix, .input-suffix{
   display:flex; align-items:center;
   background: var(--painel-bg);
@@ -162,9 +154,9 @@ h1{ font-size: clamp(2.1rem, 4.4vw, 3.4rem); line-height: 1.05; max-width: 16ch;
   border-radius: 6px;
   overflow:hidden;
 }
-.input-prefix span, .input-suffix span:last-child{
+.input-prefix .pfx, .input-suffix .sfx{
   font-family: var(--fonte-dado); font-size: .86rem; color: var(--texto-painel-mudo);
-  padding: 0 10px;
+  padding: 0 10px; flex-shrink: 0;
 }
 .input-prefix input, .input-suffix input{
   flex:1; min-width:0;
@@ -176,78 +168,88 @@ h1{ font-size: clamp(2.1rem, 4.4vw, 3.4rem); line-height: 1.05; max-width: 16ch;
 .input-prefix input{ padding-left: 0; }
 input[type="number"]{ -moz-appearance: textfield; }
 input:focus{ outline: none; }
-.input-prefix:focus-within, .input-suffix:focus-within{
-  border-color: var(--ciano);
-}
+.input-prefix:focus-within, .input-suffix:focus-within{ border-color: var(--ciano); }
+input:disabled{ opacity: .45; cursor: not-allowed; }
 
-/* marketplace select */
 .mp-select{
   width:100%;
   background: var(--painel-bg);
   border: 1px solid var(--painel-linha);
   border-radius: 6px;
   color: var(--texto-painel);
-  font-family: var(--fonte-dado);
-  font-size: .95rem;
+  font-family: var(--fonte-dado); font-size: .95rem;
   padding: 11px 10px;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
+  cursor: pointer; appearance: none; -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2364748B' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 34px;
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px;
 }
 .mp-select:focus{ outline: none; border-color: var(--ciano); }
 .mp-select option{ background: var(--painel-bg); color: var(--texto-painel); }
 
-/* tier badge */
-.tier-badge{
-  display:none;
-  font-family: var(--fonte-dado);
-  font-size: .78rem;
-  padding: 7px 14px;
-  border-radius: 100px;
-  margin: 4px 0 16px;
-  width: fit-content;
+/* ── badges ── */
+.badge{
+  display: none;
+  font-family: var(--fonte-dado); font-size: .78rem;
+  padding: 7px 14px; border-radius: 100px;
+  margin: 4px 0 14px; width: fit-content;
   border: 1px solid var(--painel-linha);
-  color: var(--texto-painel-mudo);
-  background: var(--painel-bg);
-  gap: 8px;
-  align-items: center;
+  color: var(--texto-painel-mudo); background: var(--painel-bg);
+  gap: 8px; align-items: center;
 }
-.tier-badge.ativo{ display: inline-flex; }
-.tier-badge .tag{
-  background: var(--ciano-escuro);
-  color: #fff;
-  font-weight: 700;
-  padding: 2px 9px;
-  border-radius: 100px;
-  font-size: .7rem;
-  letter-spacing: .04em;
+.badge.ativo{ display: inline-flex; }
+.badge .tag{
+  font-weight: 700; padding: 2px 9px; border-radius: 100px;
+  font-size: .7rem; letter-spacing: .04em; color: #fff;
 }
- 
-/* gauge */
+.badge-tier .tag{ background: var(--ciano-escuro); }
+.badge-pix{ border-color: rgba(16,185,129,.35); color: #6EE7B7; background: rgba(16,185,129,.08); }
+.badge-pix .tag{ background: var(--verde-pix); }
+
+/* ── gauge ── */
 .gauge-wrap{ position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
 .gauge{ width: 100%; height: auto; display:block; }
 .gauge-track{ fill:none; stroke: var(--painel-linha); stroke-width: 16; stroke-linecap: round; }
-.gauge-fill{ fill:none; stroke: var(--ciano); stroke-width: 16; stroke-linecap: round; transition: stroke-dasharray .25s ease; filter: drop-shadow(0 0 6px rgba(6,182,212,.3)); }
+.gauge-fill{ fill:none; stroke: var(--ciano); stroke-width: 16; stroke-linecap: round;
+  transition: stroke-dasharray .25s ease; filter: drop-shadow(0 0 6px rgba(6,182,212,.3)); }
 .gauge-fill--good{ stroke: var(--verde); filter: drop-shadow(0 0 6px rgba(34,197,94,.35)); }
-.gauge-center{
-  position:absolute; left:50%; bottom: 6px; transform: translateX(-50%);
-  text-align:center;
-}
+.gauge-center{ position:absolute; left:50%; bottom: 6px; transform: translateX(-50%); text-align:center; }
 .gauge-value{ display:block; font-family: var(--fonte-display); font-size: 2rem; font-weight: 800; }
 .gauge-label{ display:block; font-family: var(--fonte-dado); font-size: .72rem; color: var(--texto-painel-mudo); text-transform: uppercase; letter-spacing: .08em; }
- 
+
+/* ── preço readout ── */
 .preco-readout{
-  text-align:center; margin: 22px 0 18px;
+  text-align:center; margin: 22px 0 4px;
   padding-top: 18px; border-top: 1px dashed var(--painel-linha);
 }
 .preco-label{ display:block; font-family: var(--fonte-dado); font-size: .76rem; color: var(--texto-painel-mudo); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
 .preco-value{ font-family: var(--fonte-display); font-size: clamp(1.8rem, 3.4vw, 2.4rem); font-weight: 800; color: var(--ciano); border-bottom: 3px solid var(--ciano-escuro); padding-bottom: 2px; text-shadow: 0 0 30px rgba(6,182,212,.2); }
- 
-.breakdown{ list-style:none; margin: 0; padding: 0; }
+
+/* ── bloco pix abaixo do preço ── */
+.preco-pix-bloco{
+  display: none;
+  text-align: center;
+  margin: 10px 0 18px;
+  padding: 10px 14px;
+  background: rgba(16,185,129,.07);
+  border: 1px solid rgba(16,185,129,.25);
+  border-radius: 8px;
+}
+.preco-pix-bloco.ativo{ display: block; }
+.preco-pix-label{
+  font-family: var(--fonte-dado); font-size: .72rem;
+  color: #6EE7B7; text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 4px; display: block;
+}
+.preco-pix-value{
+  font-family: var(--fonte-display); font-size: 1.5rem; font-weight: 800; color: #34D399;
+}
+.preco-pix-nota{
+  font-family: var(--fonte-dado); font-size: .72rem; color: #6EE7B7; opacity: .7;
+  margin-top: 4px; display: block;
+}
+
+/* ── breakdown ── */
+.breakdown{ list-style:none; margin: 0 0 0; padding: 0; }
 .breakdown li{
   display:flex; align-items:center; gap: 10px;
   font-family: var(--fonte-dado); font-size: .9rem;
@@ -258,34 +260,24 @@ input:focus{ outline: none; }
 .swatch{ width: 10px; height: 10px; border-radius: 2px; flex-shrink:0; }
 .s-custo{ background: var(--cinza-dado); }
 .s-comissao{ background: var(--azul); }
-.s-adicional{ background: var(--azul-claro); }
+.s-tarifa{ background: var(--azul-claro); }
+.s-pix{ background: var(--verde-pix); }
 .s-margem{ background: var(--ciano); }
- 
-.warning{
-  background: rgba(239,68,68,.12);
-  border: 1px solid var(--danger);
-  color: #FCA5A5;
-  font-size: .88rem;
-  padding: 12px 14px; border-radius: 6px;
-  margin: 16px 0;
-}
- 
-.status-badge{
-  text-align:center; font-family: var(--fonte-dado); font-weight:600;
-  font-size: .82rem; text-transform: uppercase; letter-spacing: .06em;
-  padding: 8px 14px; border-radius: 100px;
-  margin: 18px auto 20px; width: fit-content;
-  border: 1px solid var(--painel-linha);
-  color: var(--texto-painel-mudo);
-}
-.status-badge.bom{ color: #A7F3D0; border-color: var(--verde); background: rgba(34,197,94,.12); }
-.status-badge.ruim{ color: #FCA5A5; border-color: var(--danger); background: rgba(239,68,68,.12); }
 
-/* detalhar cálculo */
+.li-pix{ display: none; color: #6EE7B7 !important; }
+.li-pix.ativo{ display: flex; }
+.li-pix .swatch{ background: var(--verde-pix); }
+
+.warning{
+  background: rgba(239,68,68,.12); border: 1px solid var(--danger);
+  color: #FCA5A5; font-size: .88rem;
+  padding: 12px 14px; border-radius: 6px; margin: 16px 0;
+}
+
+/* ── detalhar ── */
 .btn-detalhar{
-  display:flex; align-items:center; gap:8px; margin:16px auto 0;
-  background: transparent;
-  border: 1px solid var(--painel-linha);
+  display:flex; align-items:center; gap:8px; margin:18px auto 0;
+  background: transparent; border: 1px solid var(--painel-linha);
   color: var(--texto-painel-mudo);
   font-family: var(--fonte-dado); font-size: .8rem;
   padding: 10px 18px; border-radius: 6px;
@@ -297,11 +289,10 @@ input:focus{ outline: none; }
 .btn-detalhar[aria-expanded="true"] .btn-detalhar-icone{ transform: rotate(90deg); }
 
 .detalhe-calculo{
-  display: none; margin-top: 18px;
+  display: none; margin-top: 14px;
   padding: 18px 20px;
   background: var(--painel-bg);
-  border: 1px solid var(--painel-linha);
-  border-radius: 6px;
+  border: 1px solid var(--painel-linha); border-radius: 6px;
 }
 .detalhe-calculo.aberto{ display: block; }
 .detalhe-calculo h3{
@@ -311,58 +302,57 @@ input:focus{ outline: none; }
 }
 .passo-calculo{
   display: flex; gap: 12px;
-  padding: 12px 0;
-  border-top: 1px solid var(--painel-linha);
-  font-size: .86rem; line-height: 1.6;
+  padding: 12px 0; border-top: 1px solid var(--painel-linha);
+  font-size: .86rem; line-height: 1.7;
 }
 .passo-calculo:first-of-type{ border-top: none; padding-top: 0; }
 .passo-calculo > div{ flex: 1; }
 .passo-calculo p{ margin: 0; color: var(--texto-painel-mudo); }
 .passo-calculo strong{ color: var(--texto-painel); }
-.passo-numero{
+.passo-num-dt{
   font-family: var(--fonte-dado); font-weight: 700; font-size: .8rem;
-  color: var(--ciano); flex-shrink:0;
+  color: var(--ciano); flex-shrink:0; padding-top: 1px;
 }
 .passo-resultado{
-  font-family: var(--fonte-display); font-weight: 700; font-size: 1rem;
-  color: var(--ciano); margin-top: 2px !important;
+  font-family: var(--fonte-display); font-weight: 700; font-size: 1.05rem;
+  color: var(--ciano); margin-top: 3px !important;
 }
- 
+/* passo pix — verde */
+.passo-pix{ display: none; }
+.passo-pix.ativo{ display: flex; }
+.passo-pix .passo-num-dt{ color: var(--verde-pix); }
+.passo-pix .passo-resultado{ color: #34D399; }
+
 /* ============================================================
-   MANUAL (ficha técnica)
+   MANUAL
    ============================================================ */
 .manual{ background: var(--manual-papel); color: var(--manual-tinta); }
 .manual-inner{ max-width: 880px; margin: 0 auto; padding: 84px 24px; }
 .manual h2{ font-size: clamp(1.8rem, 3.6vw, 2.6rem); max-width: 18ch; }
- 
+
 .passos{ list-style:none; margin: 40px 0 0; padding:0; }
-.passos li{ display:flex; gap: 22px; padding: 30px 0; border-top: 1px solid var(--manual-linha); }
-.passos li:last-child{ padding-bottom: 0; }
-.passo-num{
+.passos > li{ display:flex; gap: 22px; padding: 30px 0; border-top: 1px solid var(--manual-linha); }
+.passos > li:last-child{ padding-bottom: 0; }
+.passo-num-txt{
   font-family: var(--fonte-dado); font-weight: 600; font-size: .9rem;
   color: var(--azul); flex-shrink:0; padding-top: 3px;
 }
 .passo-corpo h3{ font-size: 1.3rem; margin-bottom: .35em; }
 .passo-corpo p{ color: var(--manual-tinta-mudo); max-width: 62ch; }
 .passo-corpo strong{ color: var(--manual-tinta); }
- 
+
 .formula-bloco{
-  background: #1E293B;
-  border: 1px solid var(--manual-linha);
-  border-left: 4px solid var(--ciano);
-  border-radius: 4px;
-  padding: 16px 18px;
-  margin: 14px 0;
-  overflow-x: auto;
+  background: #1E293B; border: 1px solid var(--manual-linha);
+  border-left: 4px solid var(--ciano); border-radius: 4px;
+  padding: 16px 18px; margin: 14px 0; overflow-x: auto;
 }
 .formula-bloco code{ font-size: .92rem; color: var(--manual-tinta); white-space: nowrap; }
- 
+
+/* tabela comparativa */
 .tabela-comparativa{ margin: 18px 0; border: 1px solid var(--manual-linha); border-radius: 6px; overflow: hidden; }
 .tc-row{
   display:grid; grid-template-columns: 1.6fr 1fr .9fr 1.1fr;
-  gap: 10px;
-  padding: 11px 14px;
-  font-size: .86rem;
+  gap: 10px; padding: 11px 14px; font-size: .86rem;
   border-top: 1px solid var(--manual-linha);
 }
 .tc-row:first-child{ border-top:none; }
@@ -370,7 +360,20 @@ input:focus{ outline: none; }
 .tc-row span:not(:first-child){ font-family: var(--fonte-dado); }
 .tc-good{ background: rgba(6,182,212,.06); font-weight: 600; }
 .exemplo-nota{ font-size: .82rem; color: var(--manual-tinta-mudo); font-style: italic; margin-top: 10px; }
- 
+
+/* tabela faixas shopee */
+.tabela-faixas{ margin: 18px 0; border: 1px solid var(--manual-linha); border-radius: 6px; overflow: hidden; }
+.tf-row{
+  display:grid; grid-template-columns: 2fr 1.2fr 1fr;
+  gap: 10px; padding: 11px 14px; font-size: .86rem;
+  border-top: 1px solid var(--manual-linha);
+}
+.tf-row:first-child{ border-top:none; }
+.tf-head{ background: #1E293B; font-family: var(--fonte-dado); font-weight:600; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--manual-tinta-mudo); }
+.tf-row span:not(:first-child){ font-family: var(--fonte-dado); }
+.tf-pix{ color: #34D399; font-weight: 600; }
+.tf-sem-pix{ color: var(--manual-tinta-mudo); }
+
 /* ============================================================
    FOOTER
    ============================================================ */
@@ -379,22 +382,21 @@ input:focus{ outline: none; }
   text-align:center; padding: 28px 24px; font-size: .85rem;
   border-top: 1px solid var(--painel-linha);
 }
- 
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 820px){
   .calc-card{ grid-template-columns: 1fr; }
   .calc-inputs{ border-right:none; border-bottom: 1px solid var(--painel-linha); }
-  .tc-row{ grid-template-columns: 1fr; gap: 2px; }
-  .tc-row span:first-child{ font-weight: 700; }
+  .tc-row, .tf-row{ grid-template-columns: 1fr; gap: 2px; }
+  .tc-row span:first-child, .tf-row span:first-child{ font-weight: 700; }
   .topnav{ display:none; }
 }
- 
 </style>
 </head>
 <body>
- 
+
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#calculadora">
@@ -409,11 +411,11 @@ input:focus{ outline: none; }
     </nav>
   </div>
 </header>
- 
+
 <main>
- 
+
   <!-- ============ CALCULADORA ============ -->
-  <section id="calculadora" class="painel hero">
+  <section id="calculadora" class="painel">
     <div class="painel-grid-bg" aria-hidden="true"></div>
     <div class="hero-inner">
       <p class="eyebrow">CALCULAR PREÇO</p>
@@ -421,11 +423,12 @@ input:focus{ outline: none; }
       <p class="lede">Informe custo e taxas. O preço de venda sai na hora.</p>
 
       <div class="calc-card">
+        <!-- ===== INPUTS ===== -->
         <div class="calc-inputs">
-          <h2 class="card-kicker">Dados de entrada</h2>
+          <p class="card-kicker">Dados de entrada</p>
 
           <label class="field">
-            <span>Marketplace</span>
+            <span class="field-label">Marketplace</span>
             <select class="mp-select" id="calcMp" autocomplete="off">
               <option value="mlclassico">Mercado Livre (Clássico)</option>
               <option value="mlpremium">Mercado Livre (Premium)</option>
@@ -449,70 +452,78 @@ input:focus{ outline: none; }
             </select>
           </label>
 
-          <div class="tier-badge" id="calcTierBadge">
-            <span class="tag"></span>
-            <span class="info"></span>
+          <!-- badge: faixa shopee -->
+          <div class="badge badge-tier" id="badgeTier">
+            <span class="tag" id="badgeTierTag"></span>
+            <span id="badgeTierInfo"></span>
+          </div>
+
+          <!-- badge: subsídio pix shopee -->
+          <div class="badge badge-pix" id="badgePix">
+            <span class="tag">Subsídio Pix</span>
+            <span id="badgePixInfo"></span>
           </div>
 
           <label class="field">
-            <span>Preço de custo</span>
+            <span class="field-label">Preço de custo</span>
             <div class="input-prefix">
-              <span>R$</span>
+              <span class="pfx">R$</span>
               <input id="custo" type="number" inputmode="decimal" step="0.01" min="0" value="483.07">
             </div>
           </label>
 
           <label class="field">
-            <span>Frete pago por nós</span>
+            <span class="field-label">Frete pago por nós</span>
             <div class="input-prefix">
-              <span>R$</span>
+              <span class="pfx">R$</span>
               <input id="frete" type="number" inputmode="decimal" step="0.01" min="0" value="0">
             </div>
           </label>
 
           <label class="field">
-            <span>Margem de lucro desejada</span>
+            <span class="field-label">Margem de lucro desejada</span>
             <div class="input-suffix">
               <input id="margem" type="number" inputmode="decimal" step="0.1" min="0" value="30">
-              <span>%</span>
+              <span class="sfx">%</span>
             </div>
           </label>
 
           <label class="field">
-            <span>Comissão do Mercado Livre</span>
+            <span class="field-label" id="labelComissao">Comissão</span>
             <div class="input-suffix">
               <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0" value="19">
-              <span>%</span>
+              <span class="sfx">%</span>
             </div>
           </label>
 
           <label class="field">
-            <span>Adicional da plataforma</span>
+            <span class="field-label" id="labelAdicPct">Adicional da plataforma</span>
             <div class="input-suffix">
               <input id="adicionalPct" type="number" inputmode="decimal" step="0.1" min="0" value="8">
-              <span>%</span>
+              <span class="sfx">%</span>
             </div>
           </label>
 
           <label class="field">
-            <span>Adicional fixo</span>
+            <span class="field-label" id="labelAdicRS">Adicional fixo</span>
             <div class="input-prefix">
-              <span>R$</span>
+              <span class="pfx">R$</span>
               <input id="adicionalRS" type="number" inputmode="decimal" step="0.01" min="0" value="0">
             </div>
           </label>
         </div>
 
+        <!-- ===== OUTPUT ===== -->
         <div class="calc-output">
-          <h2 class="card-kicker">Resultado</h2>
+          <p class="card-kicker">Resultado</p>
 
           <div class="gauge-wrap">
             <svg viewBox="0 0 220 130" class="gauge" aria-hidden="true">
               <path class="gauge-track" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100"/>
-              <path class="gauge-fill gauge-fill--good" id="gaugeFill1" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100" stroke-dasharray="0 100"/>
+              <path class="gauge-fill gauge-fill--good" id="gaugeFill" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100" stroke-dasharray="0 100"/>
             </svg>
             <div class="gauge-center">
-              <span class="gauge-value" id="gaugeValue1">30,0%</span>
+              <span class="gauge-value" id="gaugeValue">0,0%</span>
               <span class="gauge-label">margem real</span>
             </div>
           </div>
@@ -520,6 +531,13 @@ input:focus{ outline: none; }
           <div class="preco-readout">
             <span class="preco-label">Preço de venda sugerido</span>
             <span class="preco-value" id="precoFinal">R$ 0,00</span>
+          </div>
+
+          <!-- bloco pix (shopee) -->
+          <div class="preco-pix-bloco" id="precoPix">
+            <span class="preco-pix-label">Com pagamento via Pix</span>
+            <div class="preco-pix-value" id="precoPixVal">R$ 0,00</div>
+            <span class="preco-pix-nota" id="precoPixNota">desconto de 0% absorvido pelo vendedor</span>
           </div>
 
           <button class="btn-detalhar" id="btnDetalhar" aria-expanded="false" type="button">
@@ -530,121 +548,160 @@ input:focus{ outline: none; }
           <div class="detalhe-calculo" id="detalheCalculo">
             <h3>Passo a passo do cálculo</h3>
 
+            <!-- 01: custo base -->
             <div class="passo-calculo">
-              <span class="passo-numero">01</span>
+              <span class="passo-num-dt">01</span>
               <div>
-                <p>Custo total = <strong id="dtCustoLabel">R$ 0,00</strong> + <strong id="dtFreteLabel">R$ 0,00</strong> + <strong id="dtAdicionalRSLabel">R$ 0,00</strong></p>
-                <p class="passo-resultado" id="dtCustoTotal">R$ 0,00</p>
+                <p id="dt01Desc">Custo base = custo + frete</p>
+                <p class="passo-resultado" id="dt01Res">R$ 0,00</p>
               </div>
             </div>
 
+            <!-- 02: percentuais -->
             <div class="passo-calculo">
-              <span class="passo-numero">02</span>
+              <span class="passo-num-dt">02</span>
               <div>
-                <p id="dtPercentuais">Percentuais = <strong>0%</strong> + <strong>0%</strong> + <strong>0%</strong></p>
-                <p class="passo-resultado" id="dtSomaPct">0,0%</p>
+                <p id="dt02Desc">Soma dos percentuais = margem + comissão + adicional%</p>
+                <p class="passo-resultado" id="dt02Res">0,0%</p>
               </div>
             </div>
 
+            <!-- 03: divisor -->
             <div class="passo-calculo">
-              <span class="passo-numero">03</span>
+              <span class="passo-num-dt">03</span>
               <div>
-                <p id="dtDivisorLabel">Divisor = 1 − (0,0 ÷ 100)</p>
-                <p class="passo-resultado" id="dtDivisor">0,000</p>
+                <p id="dt03Desc">Divisor = 1 − (soma% ÷ 100)</p>
+                <p class="passo-resultado" id="dt03Res">0,000</p>
               </div>
             </div>
 
+            <!-- 04: preço de venda -->
             <div class="passo-calculo">
-              <span class="passo-numero">04</span>
+              <span class="passo-num-dt">04</span>
               <div>
-                <p id="dtPrecoLabel">Preço de venda = R$ 0,00 ÷ 0,000</p>
-                <p class="passo-resultado" id="dtPreco">R$ 0,00</p>
+                <p id="dt04Desc">Preço de venda = custo base ÷ divisor</p>
+                <p class="passo-resultado" id="dt04Res">R$ 0,00</p>
               </div>
             </div>
-          </div>
+
+            <!-- 05: subsídio pix (só shopee) -->
+            <div class="passo-calculo passo-pix" id="dt05Pix">
+              <span class="passo-num-dt">05</span>
+              <div>
+                <p id="dt05Desc">Preço com Pix = preço de venda × (1 − subsídio%)</p>
+                <p class="passo-resultado" id="dt05Res">R$ 0,00</p>
+                <p id="dt05Nota" style="font-size:.8rem;margin-top:4px;"></p>
+              </div>
+            </div>
+
+          </div><!-- /detalhe -->
 
           <p class="warning" id="calcWarning" hidden></p>
 
           <ul class="breakdown">
-            <li><span class="swatch s-custo" aria-hidden="true"></span>Custo total <span id="bdCusto">R$ 0,00</span></li>
-            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão <span id="bdComissao">R$ 0,00</span></li>
-            <li><span class="swatch s-adicional" aria-hidden="true"></span>Adicional <span id="bdAdicional">R$ 0,00</span></li>
-            <li><span class="swatch s-margem" aria-hidden="true"></span>Margem (lucro) <span id="bdMargem">R$ 0,00</span></li>
+            <li><span class="swatch s-custo"></span>Custo total<span id="bdCusto">R$ 0,00</span></li>
+            <li><span class="swatch s-comissao"></span><span id="bdLabelComissao">Comissão</span><span id="bdComissao">R$ 0,00</span></li>
+            <li><span class="swatch s-tarifa"></span><span id="bdLabelTarifa">Adicional</span><span id="bdTarifa">R$ 0,00</span></li>
+            <li class="li-pix" id="liPix"><span class="swatch s-pix"></span>Desconto Pix (absorvido)<span id="bdPix">− R$ 0,00</span></li>
+            <li><span class="swatch s-margem"></span>Margem (lucro)<span id="bdMargem">R$ 0,00</span></li>
           </ul>
-        </div>
-      </div>
+        </div><!-- /output -->
+      </div><!-- /card -->
     </div>
   </section>
 
-
- 
-  <!-- ============ FICHA TÉCNICA / COMO FUNCIONA ============ -->
+  <!-- ============ FICHA TÉCNICA ============ -->
   <section id="como-funciona" class="manual">
     <div class="manual-inner">
       <p class="eyebrow eyebrow-dark">FICHA TÉCNICA</p>
       <h2>Como essa conta funciona</h2>
- 
+
       <ol class="passos">
         <li>
-          <span class="passo-num">01</span>
+          <span class="passo-num-txt">01</span>
           <div class="passo-corpo">
             <h3>O problema do "custo vezes 1,3"</h3>
             <p>Multiplicar o custo por 1,30 calcula 30% de margem <strong>sobre o custo</strong>. Mas comissão e taxas da plataforma são cobradas em cima do <strong>preço de venda</strong>, não do custo. Misturar as duas bases é o erro mais comum — e ele faz o preço final ficar mais baixo do que deveria.</p>
           </div>
         </li>
- 
+
         <li>
-          <span class="passo-num">02</span>
+          <span class="passo-num-txt">02</span>
           <div class="passo-corpo">
             <h3>A fórmula do divisor</h3>
             <p>Margem, comissão e taxas percentuais incidem todas sobre o mesmo preço final. Por isso elas se somam e entram juntas num único divisor:</p>
             <div class="formula-bloco">
               <code>Preço de venda = (Custo + custos fixos) ÷ [1 − (margem % + comissão % + adicional %)]</code>
             </div>
-            <p>Custos <em>fixos</em> em reais — frete, adicional fixo — não entram no divisor. Eles somam direto na base de custo, porque não variam com o preço.</p>
+            <p>Custos <em>fixos</em> em reais — frete, tarifa fixa — não entram no divisor. Eles somam direto na base de custo, porque não variam com o preço.</p>
           </div>
         </li>
- 
+
         <li>
-          <span class="passo-num">03</span>
+          <span class="passo-num-txt">03</span>
           <div class="passo-corpo">
             <h3>O erro mais comum: fazer em etapas</h3>
-            <p>Dividir o custo em duas contas separadas — primeiro pela comissão, depois pela margem — não dá o mesmo resultado que somar os percentuais de uma vez. As contas se compõem (multiplicam) em vez de se somar, e o preço final sai errado pra mais ou pra menos.</p>
-            <div class="tabela-comparativa" role="table" aria-label="Comparação de métodos de cálculo">
+            <p>Dividir o custo em duas contas separadas — primeiro pela comissão, depois pela margem — não dá o mesmo resultado que somar os percentuais de uma vez. As contas se compõem (multiplicam) em vez de se somar, e o preço final sai errado.</p>
+            <div class="tabela-comparativa" role="table">
               <div class="tc-row tc-head" role="row">
-                <span role="columnheader">Método</span>
-                <span role="columnheader">Conta</span>
-                <span role="columnheader">Preço final</span>
-                <span role="columnheader">Margem real obtida</span>
+                <span>Método</span><span>Conta</span><span>Preço final</span><span>Margem real</span>
               </div>
               <div class="tc-row tc-good" role="row">
-                <span role="cell">Divisor único (correto)</span>
-                <span role="cell">483,07 ÷ 0,43</span>
-                <span role="cell">R$ 1.123,42</span>
-                <span role="cell">30,0% exatos</span>
+                <span>Divisor único (correto)</span><span>483,07 ÷ 0,43</span><span>R$ 1.123,42</span><span>30,0% exatos</span>
               </div>
               <div class="tc-row" role="row">
-                <span role="cell">Margem sobre o custo, depois ÷ taxas</span>
-                <span role="cell">627,99 ÷ 0,73</span>
-                <span role="cell">R$ 860,26</span>
-                <span role="cell">~16,9%</span>
+                <span>Margem sobre custo, depois ÷ taxas</span><span>627,99 ÷ 0,73</span><span>R$ 860,26</span><span>~16,9%</span>
               </div>
               <div class="tc-row" role="row">
-                <span role="cell">Comissão contada duas vezes</span>
-                <span role="cell">627,99 ÷ 0,54</span>
-                <span role="cell">R$ 1.162,94</span>
-                <span role="cell">~31,5% (por coincidência)</span>
+                <span>Comissão contada duas vezes</span><span>627,99 ÷ 0,54</span><span>R$ 1.162,94</span><span>~31,5%</span>
               </div>
             </div>
-            <p class="exemplo-nota">Exemplo real: catalisador com custo R$ 483,07, meta de 30% de margem, 19% de comissão do ML e 8% de adicional da plataforma.</p>
+            <p class="exemplo-nota">Exemplo: custo R$ 483,07, meta 30% de margem, 19% ML Premium + 8% adicional.</p>
           </div>
         </li>
- 
+
         <li>
-          <span class="passo-num">04</span>
+          <span class="passo-num-txt">04</span>
           <div class="passo-corpo">
             <h3>Onde entram frete e valores fixos em reais</h3>
-            <p>Se a gente paga o frete do anúncio (Frete Grátis) ou tem um valor fixo adicional em R$, isso é custo de verdade — soma direto no custo antes de dividir. Diferente da comissão e do adicional em %, que mudam conforme o preço, um valor fixo em reais é sempre o mesmo, então ele entra na base, não no divisor.</p>
+            <p>Se a gente paga o frete do anúncio ou tem um custo fixo adicional em R$, isso soma direto no custo antes de dividir — diferente da comissão e do adicional em %, que incidem sobre o preço e ficam no divisor.</p>
+          </div>
+        </li>
+
+        <li>
+          <span class="passo-num-txt">05</span>
+          <div class="passo-corpo">
+            <h3>Shopee: faixas variáveis + Subsídio Pix</h3>
+            <p>A Shopee cobra comissão e tarifa fixa de acordo com a <strong>faixa de preço de venda</strong>. A calculadora resolve isso iterativamente: testa qual faixa o preço calculado cai, ajusta a tarifa e recalcula até convergir.</p>
+            <div class="tabela-faixas" role="table">
+              <div class="tf-row tf-head" role="row">
+                <span>Faixa de preço</span><span>Comissão + Tarifa</span><span>Subsídio Pix</span>
+              </div>
+              <div class="tf-row" style="background:rgba(239,68,68,.06)" role="row">
+                <span>Abaixo de R$ 8,00 ⚠️</span><span>20% + <strong>50% do preço</strong></span><span class="tf-sem-pix">—</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 8,00 a R$ 79,99</span><span>20% + R$ 4,00</span><span class="tf-sem-pix">—</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 80,00 a R$ 99,99</span><span>14% + R$ 16,00</span><span class="tf-pix">5%</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 100,00 a R$ 199,99</span><span>14% + R$ 20,00</span><span class="tf-pix">5%</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 200,00 a R$ 499,99</span><span>14% + R$ 26,00</span><span class="tf-pix">5%</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>Acima de R$ 500,00</span><span>14% + R$ 26,00</span><span class="tf-pix">8%</span>
+              </div>
+            </div>
+            <p>⚠️ <strong>Atenção faixa abaixo de R$ 8,00:</strong> a tarifa não é fixa — é <strong>50% do preço de venda</strong>. Por ser variável (proporcional ao preço), ela entra no <strong>divisor</strong> junto com margem e comissão, não no numerador como custo. A fórmula muda:</p>
+            <div class="formula-bloco">
+              <code>Preço = Custo ÷ [1 − (margem% + 20% comissão + 50% tarifa) ÷ 100]</code>
+            </div>
+            <p>O <strong>Subsídio Pix</strong> é um desconto que a Shopee oferece ao comprador quando ele paga via Pix — e esse desconto é absorvido pelo vendedor. A calculadora mostra os dois preços: o preço de venda anunciado e o <strong>preço efetivo com Pix</strong>, que é o valor real recebido após a venda.</p>
+            <p class="exemplo-nota">Exemplo Pix: item na faixa R$ 200–499,99. Preço de venda = R$ 350,00. Com Pix (5%): R$ 350,00 × 0,95 = <strong>R$ 332,50</strong> líquido recebido.</p>
           </div>
         </li>
       </ol>
@@ -652,399 +709,401 @@ input:focus{ outline: none; }
   </section>
 
 </main>
- 
+
 <footer class="rodape">
   <p>Calculadora interna · método de markup divisor.</p>
 </footer>
- 
+
 <script>
 /* ============================================================
-   Marketplace config
+   CONFIG MARKETPLACES
    ============================================================ */
-const MARKETPLACES = {
-  mlclassico: {
-    nome: 'Mercado Livre (Clássico)',
-    comissao: 14, adicionalPct: 8, adicionalRS: 0,
-    labelComissao: 'Comissão do ML Clássico',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  mlpremium: {
-    nome: 'Mercado Livre (Premium)',
-    comissao: 19, adicionalPct: 8, adicionalRS: 0,
-    labelComissao: 'Comissão do ML Premium',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
+const MP = {
+  mlclassico:    { comissao:14, adicPct:8,  adicRS:0,  labelCom:'Comissão ML Clássico',       labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  mlpremium:     { comissao:19, adicPct:8,  adicRS:0,  labelCom:'Comissão ML Premium',        labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  amazon:        { comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Amazon',            labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  magalu:        { comissao:16, adicPct:0,  adicRS:0,  labelCom:'Comissão Magalu',            labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  aliexpress:    { comissao:8,  adicPct:0,  adicRS:0,  labelCom:'Comissão AliExpress',        labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  americanas:    { comissao:19, adicPct:0,  adicRS:0,  labelCom:'Comissão Americanas',        labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  carrefour:     { comissao:16, adicPct:0,  adicRS:0,  labelCom:'Comissão Carrefour',         labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  casasbahia:    { comissao:21, adicPct:0,  adicRS:0,  labelCom:'Comissão Casas Bahia',       labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  kabum:         { comissao:14, adicPct:0,  adicRS:0,  labelCom:'Comissão KaBuM!',            labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  leroymerlin:   { comissao:18, adicPct:0,  adicRS:0,  labelCom:'Comissão Leroy Merlin',      labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  colombo:       { comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Lojas Colombo',     labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  madeiramadeira:{ comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Madeira-Madeira',   labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  netshoes:      { comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Netshoes',          labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  olist:         { comissao:21, adicPct:0,  adicRS:0,  labelCom:'Comissão Olist',             labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  shein:         { comissao:16, adicPct:0,  adicRS:0,  labelCom:'Comissão Shein',             labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  shopify:       { comissao:2,  adicPct:0,  adicRS:0,  labelCom:'Comissão Shopify',           labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  tiktok:        { comissao:12, adicPct:0,  adicRS:0,  labelCom:'Comissão TikTok Shop',       labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  wish:          { comissao:5,  adicPct:0,  adicRS:0,  labelCom:'Comissão Wish',              labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
   shopee: {
-    nome: 'Shopee',
-    comissao: 14, adicionalPct: 0, adicionalRS: 26,
-    labelComissao: 'Comissão (por faixa)',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Tarifa fixa por item',
+    labelCom: 'Comissão (definida pela faixa)',
+    labelPct: 'Adicional %',
+    labelRS:  'Tarifa fixa (definida pela faixa)',
     tipo: 'faixas',
+    /*
+      Faixas conforme tabela oficial (imagem):
+        Faixa 0: abaixo de R$8,00  → tarifa VARIÁVEL = 50% do preço de venda (entra no divisor!)
+        Faixa 1: R$8,00–R$79,99   → 20% + R$4    — sem Pix
+        Faixa 2: R$80–R$99,99     → 14% + R$16   — Pix 5%
+        Faixa 3: R$100–R$199,99   → 14% + R$20   — Pix 5%
+        Faixa 4: R$200–R$499,99   → 14% + R$26   — Pix 5%
+        Faixa 5: acima de R$500   → 14% + R$26   — Pix 8%
+
+      ATENÇÃO faixa 0: a tarifa é 50% do PREÇO DE VENDA (variável),
+      portanto entra no DIVISOR (não no numerador como custo fixo).
+      Fórmula: Preço = Custo ÷ [1 − (margem% + comissão% + 50%)]
+    */
     faixas: [
-      { id: 1, min: 0,     max: 7.99,   comissao: 50, tarifa: 0  },
-      { id: 2, min: 8,     max: 79.99,  comissao: 20, tarifa: 4  },
-      { id: 3, min: 80,    max: 99.99,  comissao: 14, tarifa: 16 },
-      { id: 4, min: 100,   max: 199.99, comissao: 14, tarifa: 20 },
-      { id: 5, min: 200,   max: 1/0,    comissao: 14, tarifa: 26 }
+      { id:0, min:0,    max:7.99,   com:20, tar:0,  tarifaPct:50, pixPct:0 },
+      { id:1, min:8,    max:79.99,  com:20, tar:4,  tarifaPct:0,  pixPct:0 },
+      { id:2, min:80,   max:99.99,  com:14, tar:16, tarifaPct:0,  pixPct:5 },
+      { id:3, min:100,  max:199.99, com:14, tar:20, tarifaPct:0,  pixPct:5 },
+      { id:4, min:200,  max:499.99, com:14, tar:26, tarifaPct:0,  pixPct:5 },
+      { id:5, min:500,  max:Infinity, com:14, tar:26, tarifaPct:0, pixPct:8 }
     ]
-  },
-  amazon: {
-    nome: 'Amazon',
-    comissao: 20, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão da Amazon',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  magalu: {
-    nome: 'Magazine Luiza',
-    comissao: 16, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão do Magalu',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  aliexpress: {
-    nome: 'AliExpress',
-    comissao: 8, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão do AliExpress',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  americanas: {
-    nome: 'Americanas',
-    comissao: 19, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão das Americanas',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  carrefour: {
-    nome: 'Carrefour',
-    comissao: 16, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão do Carrefour',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  casasbahia: {
-    nome: 'Casas Bahia',
-    comissao: 21, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão das Casas Bahia',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  kabum: {
-    nome: 'KaBuM!',
-    comissao: 14, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão do KaBuM!',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  leroymerlin: {
-    nome: 'Leroy Merlin',
-    comissao: 18, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão da Leroy Merlin',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  colombo: {
-    nome: 'Lojas Colombo',
-    comissao: 20, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão das Lojas Colombo',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  madeiramadeira: {
-    nome: 'Madeira-Madeira',
-    comissao: 20, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão da Madeira-Madeira',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  netshoes: {
-    nome: 'Netshoes',
-    comissao: 20, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão da Netshoes',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  olist: {
-    nome: 'Olist',
-    comissao: 21, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão da Olist',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  shein: {
-    nome: 'Shein',
-    comissao: 16, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão da Shein',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  shopify: {
-    nome: 'Shopify',
-    comissao: 2, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão do Shopify',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  tiktok: {
-    nome: 'TikTok Shop',
-    comissao: 12, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão do TikTok Shop',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
-  },
-  wish: {
-    nome: 'Wish',
-    comissao: 5, adicionalPct: 0, adicionalRS: 0,
-    labelComissao: 'Comissão do Wish',
-    labelAdicional: 'Adicional da plataforma',
-    labelAdicionalRS: 'Adicional fixo'
   }
 };
 
-const SHOPEE = MARKETPLACES.shopee;
-
 /* ============================================================
-   Helpers
+   HELPERS
    ============================================================ */
-const fmtBRL = n => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
-const fmtPct = n => n.toFixed(1).replace('.', ',') + '%';
-const numFrom = id => parseFloat(document.getElementById(id).value.replace(',', '.')) || 0;
+const R$    = n => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(n);
+const pct   = n => n.toFixed(1).replace('.', ',') + '%';
+const dec3  = n => n.toFixed(3).replace('.', ',');
+const val   = id => parseFloat(document.getElementById(id).value) || 0;
+const el    = id => document.getElementById(id);
+const txt   = (id, v) => el(id).textContent = v;
+const html  = (id, v) => el(id).innerHTML = v;
 
 const GAUGE_MAX = 60;
-
-function setGauge(fillId, valueId, marginPct, isGood) {
-  const fill = document.getElementById(fillId);
-  const clamped = Math.max(0, Math.min(GAUGE_MAX, marginPct));
-  const pct = (clamped / GAUGE_MAX) * 100;
-  fill.setAttribute('stroke-dasharray', `${pct} 100`);
-  fill.classList.toggle('gauge-fill--good', !!isGood);
-  document.getElementById(valueId).textContent = fmtPct(marginPct);
+function setGauge(pctVal) {
+  const clamped = Math.max(0, Math.min(GAUGE_MAX, pctVal));
+  el('gaugeFill').setAttribute('stroke-dasharray', `${(clamped/GAUGE_MAX)*100} 100`);
+  txt('gaugeValue', pct(pctVal));
 }
-
-const pctFmt = n => n.toFixed(1).replace('.', ',') + '%';
-const decFmt = n => n.toFixed(3).replace('.', ',');
 
 /* ============================================================
-   Shopee helpers
+   SHOPEE — busca faixa e itera até convergir
    ============================================================ */
-function shopeeTier(preco) {
-  return SHOPEE.faixas.find(f => preco >= f.min && preco <= f.max) || SHOPEE.faixas[SHOPEE.faixas.length - 1];
+function shopeeFaixa(preco) {
+  const f = MP.shopee.faixas;
+  return f.find(x => preco >= x.min && preco <= x.max) || f[f.length-1];
 }
 
-function shopeeCalcular(custoBase, margem) {
-  const faixas = SHOPEE.faixas;
+/*
+  calcPrecoFaixa: calcula o preço para uma determinada faixa.
+  Se a faixa tem tarifaPct > 0 (faixa 0 — abaixo de R$8),
+  a tarifa é VARIÁVEL (% do preço) e entra NO DIVISOR.
+  Nas demais faixas a tarifa é FIXA em R$ e entra no NUMERADOR.
+*/
+function calcPrecoFaixa(custoBase, margem, faixa) {
+  if (faixa.tarifaPct > 0) {
+    // Tarifa variável: Preço = Custo ÷ [1 − (margem% + com% + tarifaPct%) / 100]
+    const soma = margem + faixa.com + faixa.tarifaPct;
+    if (soma >= 100) return null;
+    return custoBase / (1 - soma/100);
+  } else {
+    // Tarifa fixa: Preço = (Custo + tarifa) ÷ [1 − (margem% + com%) / 100]
+    const soma = margem + faixa.com;
+    if (soma >= 100) return null;
+    return (custoBase + faixa.tar) / (1 - soma/100);
+  }
+}
 
-  for (const faixa of faixas) {
-    const soma = margem + faixa.comissao;
-    if (soma >= 100) continue;
-    const d = 1 - soma / 100;
-    if (d <= 0) continue;
-    const preco = (custoBase + faixa.tarifa) / d;
-    if (preco >= faixa.min && preco <= faixa.max)
-      return { preco, faixa };
+function shopeeCalc(custoBase, margem) {
+  const faixas = MP.shopee.faixas;
+
+  // tentativa direta em cada faixa
+  for (const f of faixas) {
+    const preco = calcPrecoFaixa(custoBase, margem, f);
+    if (preco === null || preco <= 0 || !isFinite(preco)) continue;
+    if (preco >= f.min && preco <= f.max) return { preco, faixa: f };
   }
 
-  let faixa = faixas[2];
-  for (let i = 0; i < 10; i++) {
-    const soma = margem + faixa.comissao;
-    if (soma >= 100) { faixa = faixas[faixas.length - 1]; continue; }
-    const d = 1 - soma / 100;
-    if (d <= 0) break;
-    const preco = (custoBase + faixa.tarifa) / d;
-    const nova = shopeeTier(preco);
+  // iteração de convergência (resolve casos limítrofes entre faixas)
+  let faixa = faixas[3]; // começa na faixa 3 (R$100–199,99 — mais comum)
+  for (let i = 0; i < 15; i++) {
+    const preco = calcPrecoFaixa(custoBase, margem, faixa);
+    if (preco === null || preco <= 0 || !isFinite(preco)) {
+      faixa = faixas[faixas.length-1]; continue;
+    }
+    const nova = shopeeFaixa(preco);
     if (nova === faixa) return { preco, faixa };
     faixa = nova;
   }
 
-  faixa = faixas[faixas.length - 1];
-  const preco = (custoBase + faixa.tarifa) / (1 - (margem + faixa.comissao) / 100);
-  return { preco, faixa };
-}
-
-function atualizarTierBadge(badgeId, tagId, infoId, tier) {
-  const badge = document.getElementById(badgeId);
-  if (!tier) { badge.classList.remove('ativo'); return; }
-  badge.classList.add('ativo');
-  document.getElementById(tagId).textContent = `Faixa ${tier.id}`;
-  document.getElementById(infoId).textContent = `${tier.comissao}% + R$ ${tier.tarifa.toFixed(2).replace('.', ',')}`;
+  // fallback na última faixa
+  const f = faixas[faixas.length-1];
+  const preco = calcPrecoFaixa(custoBase, margem, f);
+  if (!preco || preco <= 0) return null;
+  return { preco, faixa: f };
 }
 
 /* ============================================================
-   Aplicar configuração do marketplace nos campos
+   APLICAR CONFIG DO MARKETPLACE
    ============================================================ */
-function aplicarMP(mpId, prefix) {
-  const mp = document.getElementById(mpId).value;
-  const cfg = MARKETPLACES[mp];
-  const isPv = prefix === 'pv';
+function aplicarMP() {
+  const mpId = el('calcMp').value;
+  const cfg  = MP[mpId];
+  const isShopee = mpId === 'shopee';
 
-  const comEl = document.getElementById(isPv ? 'pvComissao' : 'comissao');
-  const adicPctEl = document.getElementById(isPv ? 'pvAdicionalPct' : 'adicionalPct');
-  const adicRSEl = document.getElementById(isPv ? 'pvAdicionalRS' : 'adicionalRS');
-  const labelCom = comEl.closest('.field').querySelector('span:first-child');
-  const labelAdic = adicPctEl.closest('.field').querySelector('span:first-child');
-  const labelAdicRS = adicRSEl.closest('.field').querySelector('span:first-child');
+  txt('labelComissao', cfg.labelCom);
+  txt('labelAdicPct',  cfg.labelPct);
+  txt('labelAdicRS',   cfg.labelRS);
 
-  labelCom.textContent = cfg.labelComissao;
-  labelAdic.textContent = cfg.labelAdicional;
-  labelAdicRS.textContent = cfg.labelAdicionalRS;
-
-  comEl.value = cfg.comissao;
-  adicPctEl.value = cfg.adicionalPct;
-  adicRSEl.value = cfg.adicionalRS;
-
-  if (cfg.tipo === 'faixas') {
-    adicPctEl.disabled = true;
-    adicRSEl.disabled = true;
-  } else {
-    adicPctEl.disabled = false;
-    adicRSEl.disabled = false;
+  if (!isShopee) {
+    el('comissao').value    = cfg.comissao;
+    el('adicionalPct').value = cfg.adicPct;
+    el('adicionalRS').value  = cfg.adicRS;
   }
+
+  el('comissao').disabled    = isShopee;
+  el('adicionalPct').disabled = isShopee;
+  el('adicionalRS').disabled  = isShopee;
 }
 
 /* ============================================================
-   Calculadora 1 — preço sugerido a partir do custo
+   LIMPAR ELEMENTOS SHOPEE (quando troca de marketplace)
    ============================================================ */
-function calcularPreco() {
-  const mp = document.getElementById('calcMp').value;
-  const cfg = MARKETPLACES[mp];
-  const isShopee = mp === 'shopee';
+function limparShopee() {
+  el('badgeTier').classList.remove('ativo');
+  el('badgePix').classList.remove('ativo');
+  el('precoPix').classList.remove('ativo');
+  el('liPix').classList.remove('ativo');
+  el('dt05Pix').classList.remove('ativo');
+}
 
-  const custo = numFrom('custo');
-  const frete = numFrom('frete');
-  const margem = numFrom('margem');
-  const comissao = isShopee ? 0 : numFrom('comissao');
-  const adicionalPct = isShopee ? 0 : numFrom('adicionalPct');
-  const adicionalRS = isShopee ? 0 : numFrom('adicionalRS');
+/* ============================================================
+   CALCULAR
+   ============================================================ */
+function calcular() {
+  const mpId    = el('calcMp').value;
+  const isShopee = mpId === 'shopee';
+  const warn    = el('calcWarning');
 
-  const warningEl = document.getElementById('calcWarning');
+  const custo  = val('custo');
+  const frete  = val('frete');
+  const margem = val('margem');
 
+  /* ────────── SHOPEE ────────── */
   if (isShopee) {
     const custoBase = custo + frete;
-    const result = shopeeCalcular(custoBase, margem);
+    const result    = shopeeCalc(custoBase, margem);
 
-    if (!result || result.preco <= 0) {
-      warningEl.hidden = false;
-      warningEl.textContent = 'Não foi possível calcular com a margem desejada. Reduza a margem ou verifique os dados.';
-      document.getElementById('precoFinal').textContent = '—';
-      ['bdCusto','bdComissao','bdAdicional','bdMargem'].forEach(id =>
-        document.getElementById(id).textContent = '—');
-      setGauge('gaugeFill1','gaugeValue1',0,true);
-      document.getElementById('calcTierBadge').classList.remove('ativo');
+    if (!result || !isFinite(result.preco) || result.preco <= 0) {
+      warn.hidden = false;
+      warn.textContent = 'Não foi possível calcular com a margem desejada. Reduza a margem ou verifique os dados.';
+      txt('precoFinal', '—');
+      ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
+      setGauge(0);
+      limparShopee();
       return;
     }
 
-    warningEl.hidden = true;
+    warn.hidden = true;
     const { preco, faixa } = result;
-    const comV = preco * faixa.comissao / 100;
-    const margemV = preco * margem / 100;
 
-    document.getElementById('precoFinal').textContent = fmtBRL(preco);
-    document.getElementById('bdCusto').textContent = fmtBRL(custoBase);
-    document.getElementById('bdComissao').textContent = fmtBRL(comV);
-    document.getElementById('bdAdicional').textContent = fmtBRL(faixa.tarifa);
-    document.getElementById('bdMargem').textContent = fmtBRL(margemV);
+    // valores derivados
+    const comV    = preco * faixa.com / 100;          // comissão em R$
+    const margemV = preco * margem / 100;             // margem em R$
+    const tarifaVar = faixa.tarifaPct > 0;            // true = tarifa é % do preço
+    const tarifaV = tarifaVar
+      ? preco * faixa.tarifaPct / 100                 // tarifa variável em R$
+      : faixa.tar;                                    // tarifa fixa em R$
+    const pixPct  = faixa.pixPct;
+    const precoPix = preco * (1 - pixPct/100);
+    const descPix  = preco - precoPix;
+    const temPix   = pixPct > 0;
 
-    setGauge('gaugeFill1','gaugeValue1',margem,true);
+    // ── preço principal
+    txt('precoFinal', R$(preco));
 
-    atualizarTierBadge('calcTierBadge','calcTierTag','calcTierInfo',faixa);
+    // ── bloco pix
+    if (temPix) {
+      el('precoPix').classList.add('ativo');
+      txt('precoPixVal', R$(precoPix));
+      txt('precoPixNota', `desconto de ${pct(pixPct)} absorvido pelo vendedor = ${R$(descPix)}`);
+    } else {
+      el('precoPix').classList.remove('ativo');
+    }
 
-    const dtCustoTotal = custoBase + faixa.tarifa;
-    document.getElementById('dtCustoLabel').textContent = fmtBRL(custo);
-    document.getElementById('dtFreteLabel').textContent = fmtBRL(frete);
-    document.getElementById('dtAdicionalRSLabel').textContent = fmtBRL(faixa.tarifa);
-    document.getElementById('dtCustoTotal').textContent = fmtBRL(dtCustoTotal);
-    document.getElementById('dtPercentuais').innerHTML =
-      `Percentuais = <strong>${pctFmt(margem)}</strong> + <strong>${pctFmt(faixa.comissao)}</strong> + <strong>0,0%</strong> (adicional incluso na tarifa fixa)`;
-    document.getElementById('dtSomaPct').textContent = pctFmt(margem + faixa.comissao);
-    document.getElementById('dtDivisorLabel').innerHTML =
-      `Divisor = 1 − (${pctFmt(margem + faixa.comissao)} ÷ 100)`;
-    document.getElementById('dtDivisor').textContent = decFmt(1 - (margem + faixa.comissao) / 100);
-    document.getElementById('dtPrecoLabel').innerHTML =
-      `Preço de venda = ${fmtBRL(dtCustoTotal)} ÷ ${decFmt(1 - (margem + faixa.comissao) / 100)}`;
-    document.getElementById('dtPreco').textContent = fmtBRL(preco);
+    // ── gauge
+    setGauge(margem);
+
+    // ── badges
+    el('badgeTier').classList.add('ativo');
+    txt('badgeTierTag',  `Faixa ${faixa.id}`);
+    txt('badgeTierInfo', tarifaVar
+      ? `${faixa.com}% + ${faixa.tarifaPct}% do preço`
+      : `${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.',',')}`);
+
+    if (temPix) {
+      el('badgePix').classList.add('ativo');
+      txt('badgePixInfo', `${pixPct}% descontado no Pix`);
+    } else {
+      el('badgePix').classList.remove('ativo');
+    }
+
+    // ── breakdown
+    txt('bdCusto',    R$(custoBase));
+    txt('bdComissao', R$(comV));
+    txt('bdTarifa',   R$(tarifaV));
+    txt('bdMargem',   R$(margemV));
+    txt('bdLabelComissao', `Comissão Shopee (${faixa.com}%)`);
+    txt('bdLabelTarifa', tarifaVar
+      ? `Tarifa variável faixa ${faixa.id} (${faixa.tarifaPct}% do preço)`
+      : `Tarifa fixa faixa ${faixa.id}`);
+
+    if (temPix) {
+      el('liPix').classList.add('ativo');
+      txt('bdPix', `− ${R$(descPix)}`);
+    } else {
+      el('liPix').classList.remove('ativo');
+    }
+
+    // ── detalhamento passo a passo
+    if (tarifaVar) {
+      // ── FAIXA 0: tarifa % entra no divisor, numerador = só custo base
+      const somaPct = margem + faixa.com + faixa.tarifaPct;
+      const divisor = 1 - somaPct/100;
+
+      html('dt01Desc',
+        `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
+        `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id} (abaixo de R$ 8,00): a tarifa é <strong style="color:var(--texto-painel)">50% do preço de venda</strong> — portanto é variável e NÃO entra no numerador; ela vai para o divisor no passo 02</small>`);
+      txt('dt01Res', R$(custoBase));
+
+      html('dt02Desc',
+        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id}) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa variável)<br>`+
+        `<small style="color:var(--texto-painel-mudo)">A tarifa de ${pct(faixa.tarifaPct)} é cobrada sobre o preço de venda → some no divisor junto com margem e comissão</small>`);
+      txt('dt02Res', pct(somaPct));
+
+      html('dt03Desc',
+        `Divisor = 1 − (${pct(somaPct)} ÷ 100) = 1 − ${dec3(somaPct/100)}<br>`+
+        `<small style="color:var(--texto-painel-mudo)">Fatia do preço que sobra após descontar margem + comissão + tarifa variável</small>`);
+      txt('dt03Res', dec3(divisor));
+
+      html('dt04Desc',
+        `Preço de venda = ${R$(custoBase)} ÷ ${dec3(divisor)}<br>`+
+        `<small style="color:var(--texto-painel-mudo)">Só o custo base no numerador — a tarifa variável já está embutida no divisor</small>`);
+      txt('dt04Res', R$(preco));
+
+    } else {
+      // ── FAIXAS 1–5: tarifa fixa entra no numerador
+      const somaPct = margem + faixa.com;
+      const divisor = 1 - somaPct/100;
+      const ctBase  = custoBase + faixa.tar;
+
+      html('dt01Desc',
+        `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(faixa.tar)}</strong> (tarifa fixa faixa ${faixa.id})<br>`+
+        `<small style="color:var(--texto-painel-mudo)">Tarifa fixa em R$ não varia com o preço → entra no numerador como custo</small>`);
+      txt('dt01Res', R$(ctBase));
+
+      html('dt02Desc',
+        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})<br>`+
+        `<small style="color:var(--texto-painel-mudo)">Ambos incidem sobre o preço de venda → somam no divisor. A tarifa já foi somada no custo acima.</small>`);
+      txt('dt02Res', pct(somaPct));
+
+      html('dt03Desc',
+        `Divisor = 1 − (${pct(somaPct)} ÷ 100) = 1 − ${dec3(somaPct/100)}<br>`+
+        `<small style="color:var(--texto-painel-mudo)">Representa a fatia do preço que sobra após descontar todas as % acima</small>`);
+      txt('dt03Res', dec3(divisor));
+
+      html('dt04Desc',
+        `Preço de venda = ${R$(ctBase)} ÷ ${dec3(divisor)}<br>`+
+        `<small style="color:var(--texto-painel-mudo)">Divide o custo total pelo divisor para que a margem seja sobre o preço, não sobre o custo</small>`);
+      txt('dt04Res', R$(preco));
+    }
+
+    // passo 05 — pix
+    if (temPix) {
+      el('dt05Pix').classList.add('ativo');
+      html('dt05Desc',
+        `Preço com Pix = ${R$(preco)} × (1 − ${pct(pixPct)}) = ${R$(preco)} × ${dec3(1 - pixPct/100)}<br>`+
+        `<small style="color:var(--texto-painel-mudo)">A Shopee aplica ${pct(pixPct)} de subsídio Pix para o comprador — esse custo recai sobre o vendedor</small>`);
+      txt('dt05Res', R$(precoPix));
+      html('dt05Nota',
+        `<span style="color:var(--texto-painel-mudo)">Diferença absorvida: ${R$(descPix)} | Faixa ${faixa.id}: ${faixa.com}% + R$ ${tarifa}</span>`);
+    } else {
+      el('dt05Pix').classList.remove('ativo');
+    }
+
     return;
   }
 
-  // Marketplace simples (percentual)
-  const somaPct = margem + comissao + adicionalPct;
+  /* ────────── MARKETPLACE SIMPLES ────────── */
+  limparShopee();
+
+  const comissao    = val('comissao');
+  const adicPct     = val('adicionalPct');
+  const adicRS      = val('adicionalRS');
+  const somaPct     = margem + comissao + adicPct;
 
   if (somaPct >= 100) {
-    warningEl.hidden = false;
-    warningEl.textContent =
-      `Margem + comissão + adicional somam ${somaPct.toFixed(1).replace('.', ',')}%. ` +
-      `Isso é 100% ou mais do preço de venda — não existe preço que cubra isso. Reduza algum percentual.`;
-    document.getElementById('precoFinal').textContent = '—';
-    ['bdCusto','bdComissao','bdAdicional','bdMargem'].forEach(id =>
-      document.getElementById(id).textContent = '—');
-    setGauge('gaugeFill1','gaugeValue1',0,true);
-    ['dtCustoLabel','dtFreteLabel','dtAdicionalRSLabel','dtCustoTotal'].forEach(id =>
-      document.getElementById(id).textContent = '—');
-    document.getElementById('dtPercentuais').innerHTML = 'Percentuais = <strong>—</strong>';
-    document.getElementById('dtSomaPct').textContent = '—';
-    document.getElementById('dtDivisorLabel').innerHTML = 'Divisor = —';
-    document.getElementById('dtDivisor').textContent = '—';
-    document.getElementById('dtPrecoLabel').innerHTML = 'Preço de venda = —';
-    document.getElementById('dtPreco').textContent = '—';
-    document.getElementById('calcTierBadge').classList.remove('ativo');
+    warn.hidden = false;
+    warn.textContent = `Margem + comissão + adicional somam ${pct(somaPct)} — igual ou acima de 100% do preço. Reduza algum percentual.`;
+    txt('precoFinal', '—');
+    ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
+    txt('dt01Res','—'); txt('dt02Res','—'); txt('dt03Res','—'); txt('dt04Res','—');
+    setGauge(0);
     return;
   }
-  warningEl.hidden = true;
-  document.getElementById('calcTierBadge').classList.remove('ativo');
 
-  const divisor = 1 - somaPct / 100;
-  const custoTotal = custo + frete + adicionalRS;
-  const preco = custoTotal / divisor;
+  warn.hidden = true;
 
-  document.getElementById('precoFinal').textContent = fmtBRL(preco);
-  document.getElementById('bdCusto').textContent = fmtBRL(custoTotal);
-  document.getElementById('bdComissao').textContent = fmtBRL(preco * comissao / 100);
-  document.getElementById('bdAdicional').textContent = fmtBRL(preco * adicionalPct / 100);
-  document.getElementById('bdMargem').textContent = fmtBRL(preco * margem / 100);
+  const divisor    = 1 - somaPct/100;
+  const custoTotal = custo + frete + adicRS;
+  const preco      = custoTotal / divisor;
 
-  setGauge('gaugeFill1','gaugeValue1',margem,true);
+  // outputs
+  txt('precoFinal', R$(preco));
+  setGauge(margem);
 
-  document.getElementById('dtCustoLabel').textContent = fmtBRL(custo);
-  document.getElementById('dtFreteLabel').textContent = fmtBRL(frete);
-  document.getElementById('dtAdicionalRSLabel').textContent = fmtBRL(adicionalRS);
-  document.getElementById('dtCustoTotal').textContent = fmtBRL(custoTotal);
-  document.getElementById('dtPercentuais').innerHTML =
-    `Percentuais = <strong>${pctFmt(margem)}</strong> + <strong>${pctFmt(comissao)}</strong> + <strong>${pctFmt(adicionalPct)}</strong>`;
-  document.getElementById('dtSomaPct').textContent = pctFmt(somaPct);
-  document.getElementById('dtDivisorLabel').innerHTML =
-    `Divisor = 1 − (${pctFmt(somaPct)} ÷ 100)`;
-  document.getElementById('dtDivisor').textContent = decFmt(divisor);
-  document.getElementById('dtPrecoLabel').innerHTML =
-    `Preço de venda = ${fmtBRL(custoTotal)} ÷ ${decFmt(divisor)}`;
-  document.getElementById('dtPreco').textContent = fmtBRL(preco);
+  txt('bdCusto',    R$(custoTotal));
+  txt('bdComissao', R$(preco * comissao/100));
+  txt('bdTarifa',   R$(preco * adicPct/100 + adicRS));
+  txt('bdMargem',   R$(preco * margem/100));
+  txt('bdLabelComissao', 'Comissão');
+  txt('bdLabelTarifa',   'Adicional');
+
+  // detalhamento
+  html('dt01Desc',
+    `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(adicRS)}</strong> (adicional fixo em R$)<br>`+
+    `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base — não variam com o preço de venda</small>`);
+  txt('dt01Res', R$(custoTotal));
+
+  html('dt02Desc',
+    `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(comissao)}</strong> (comissão) + <strong>${pct(adicPct)}</strong> (adicional %)<br>`+
+    `<small style="color:var(--texto-painel-mudo)">Todos incidem sobre o preço de venda → somam juntos no divisor</small>`);
+  txt('dt02Res', pct(somaPct));
+
+  html('dt03Desc',
+    `Divisor = 1 − (${pct(somaPct)} ÷ 100) = 1 − ${dec3(somaPct/100)}<br>`+
+    `<small style="color:var(--texto-painel-mudo)">A fatia do preço que sobra depois de tirar todas as % é o divisor</small>`);
+  txt('dt03Res', dec3(divisor));
+
+  html('dt04Desc',
+    `Preço de venda = ${R$(custoTotal)} ÷ ${dec3(divisor)}<br>`+
+    `<small style="color:var(--texto-painel-mudo)">Resultado: a margem de ${pct(margem)} agora incide sobre o preço, não sobre o custo</small>`);
+  txt('dt04Res', R$(preco));
 }
 
-
-
 /* ============================================================
-   Listeners
+   LISTENERS
    ============================================================ */
-document.querySelectorAll('#calculadora input').forEach(el => el.addEventListener('input', calcularPreco));
-document.getElementById('calcMp').addEventListener('change', function() {
-  aplicarMP('calcMp','');
-  calcularPreco();
+document.querySelectorAll('#calculadora input').forEach(e => e.addEventListener('input', calcular));
+el('calcMp').addEventListener('change', () => { aplicarMP(); calcular(); });
+el('btnDetalhar').addEventListener('click', function() {
+  const open = this.getAttribute('aria-expanded') === 'true';
+  this.setAttribute('aria-expanded', !open);
+  el('detalheCalculo').classList.toggle('aberto', !open);
 });
 
-document.getElementById('btnDetalhar').addEventListener('click', function() {
-  const btn = this;
-  const detalhe = document.getElementById('detalheCalculo');
-  const isOpen = btn.getAttribute('aria-expanded') === 'true';
-  btn.setAttribute('aria-expanded', !isOpen);
-  detalhe.classList.toggle('aberto', !isOpen);
-});
-
-window.scrollTo(0, 0);
-aplicarMP('calcMp','');
-calcularPreco();
-
+// init
+window.scrollTo(0,0);
+aplicarMP();
+calcular();
 </script>
 </body>
 </html>
