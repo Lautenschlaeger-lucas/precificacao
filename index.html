@@ -433,6 +433,20 @@ input:focus{ outline: none; }
               <option value="shopee">Shopee</option>
               <option value="amazon">Amazon</option>
               <option value="magalu">Magazine Luiza</option>
+              <option value="aliexpress">AliExpress</option>
+              <option value="americanas">Americanas</option>
+              <option value="carrefour">Carrefour</option>
+              <option value="casasbahia">Casas Bahia</option>
+              <option value="kabum">KaBuM!</option>
+              <option value="leroymerlin">Leroy Merlin</option>
+              <option value="colombo">Lojas Colombo</option>
+              <option value="madeiramadeira">Madeira-Madeira</option>
+              <option value="netshoes">Netshoes</option>
+              <option value="olist">Olist</option>
+              <option value="shein">Shein</option>
+              <option value="shopify">Shopify</option>
+              <option value="tiktok">TikTok Shop</option>
+              <option value="wish">Wish</option>
             </select>
           </label>
 
@@ -583,6 +597,20 @@ input:focus{ outline: none; }
               <option value="shopee">Shopee</option>
               <option value="amazon">Amazon</option>
               <option value="magalu">Magazine Luiza</option>
+              <option value="aliexpress">AliExpress</option>
+              <option value="americanas">Americanas</option>
+              <option value="carrefour">Carrefour</option>
+              <option value="casasbahia">Casas Bahia</option>
+              <option value="kabum">KaBuM!</option>
+              <option value="leroymerlin">Leroy Merlin</option>
+              <option value="colombo">Lojas Colombo</option>
+              <option value="madeiramadeira">Madeira-Madeira</option>
+              <option value="netshoes">Netshoes</option>
+              <option value="olist">Olist</option>
+              <option value="shein">Shein</option>
+              <option value="shopify">Shopify</option>
+              <option value="tiktok">TikTok Shop</option>
+              <option value="wish">Wish</option>
             </select>
           </label>
 
@@ -790,15 +818,113 @@ const MARKETPLACES = {
   },
   amazon: {
     nome: 'Amazon',
-    comissao: 15, adicionalPct: 0, adicionalRS: 0,
+    comissao: 20, adicionalPct: 0, adicionalRS: 0,
     labelComissao: 'Comissão da Amazon',
     labelAdicional: 'Adicional da plataforma',
     labelAdicionalRS: 'Adicional fixo'
   },
   magalu: {
     nome: 'Magazine Luiza',
-    comissao: 18, adicionalPct: 0, adicionalRS: 0,
+    comissao: 16, adicionalPct: 0, adicionalRS: 0,
     labelComissao: 'Comissão do Magalu',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  aliexpress: {
+    nome: 'AliExpress',
+    comissao: 8, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão do AliExpress',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  americanas: {
+    nome: 'Americanas',
+    comissao: 19, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão das Americanas',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  carrefour: {
+    nome: 'Carrefour',
+    comissao: 16, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão do Carrefour',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  casasbahia: {
+    nome: 'Casas Bahia',
+    comissao: 21, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão das Casas Bahia',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  kabum: {
+    nome: 'KaBuM!',
+    comissao: 14, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão do KaBuM!',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  leroymerlin: {
+    nome: 'Leroy Merlin',
+    comissao: 18, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão da Leroy Merlin',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  colombo: {
+    nome: 'Lojas Colombo',
+    comissao: 20, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão das Lojas Colombo',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  madeiramadeira: {
+    nome: 'Madeira-Madeira',
+    comissao: 20, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão da Madeira-Madeira',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  netshoes: {
+    nome: 'Netshoes',
+    comissao: 20, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão da Netshoes',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  olist: {
+    nome: 'Olist',
+    comissao: 21, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão da Olist',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  shein: {
+    nome: 'Shein',
+    comissao: 16, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão da Shein',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  shopify: {
+    nome: 'Shopify',
+    comissao: 2, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão do Shopify',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  tiktok: {
+    nome: 'TikTok Shop',
+    comissao: 12, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão do TikTok Shop',
+    labelAdicional: 'Adicional da plataforma',
+    labelAdicionalRS: 'Adicional fixo'
+  },
+  wish: {
+    nome: 'Wish',
+    comissao: 5, adicionalPct: 0, adicionalRS: 0,
+    labelComissao: 'Comissão do Wish',
     labelAdicional: 'Adicional da plataforma',
     labelAdicionalRS: 'Adicional fixo'
   }
