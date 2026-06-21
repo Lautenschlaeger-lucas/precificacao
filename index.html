@@ -404,8 +404,7 @@ input:focus{ outline: none; }
       <span class="brand-text">Painel de Preços <em>· interno</em></span>
     </a>
     <nav class="topnav">
-      <a href="#calculadora">Anúncios a publicar</a>
-      <a href="#conferir">Anúncios publicados</a>
+      <a href="#calculadora">Calculadora</a>
       <a href="#como-funciona">Como funciona</a>
     </nav>
   </div>
@@ -577,131 +576,7 @@ input:focus{ outline: none; }
     </div>
   </section>
 
-  <!-- ============ CONFERIR ============ -->
-  <section id="conferir" class="painel painel-secundario">
-    <div class="painel-grid-bg" aria-hidden="true"></div>
-    <div class="hero-inner">
-      <p class="eyebrow">PAINEL DE PRECIFICAÇÃO · ANÚNCIOS PUBLICADOS</p>
-      <h2>Esse anúncio está com a margem certa?</h2>
-      <p class="lede">Cole o preço de venda atual e o custo. A calculadora mostra a margem real que esse anúncio está entregando agora — pra revisar o que já está no ar.</p>
 
-      <div class="calc-card">
-        <div class="calc-inputs">
-          <h2 class="card-kicker">Dados do anúncio</h2>
-
-          <label class="field">
-            <span>Marketplace</span>
-            <select class="mp-select" id="pvMp" autocomplete="off">
-              <option value="mlclassico">Mercado Livre (Clássico)</option>
-              <option value="mlpremium">Mercado Livre (Premium)</option>
-              <option value="shopee">Shopee</option>
-              <option value="amazon">Amazon</option>
-              <option value="magalu">Magazine Luiza</option>
-              <option value="aliexpress">AliExpress</option>
-              <option value="americanas">Americanas</option>
-              <option value="carrefour">Carrefour</option>
-              <option value="casasbahia">Casas Bahia</option>
-              <option value="kabum">KaBuM!</option>
-              <option value="leroymerlin">Leroy Merlin</option>
-              <option value="colombo">Lojas Colombo</option>
-              <option value="madeiramadeira">Madeira-Madeira</option>
-              <option value="netshoes">Netshoes</option>
-              <option value="olist">Olist</option>
-              <option value="shein">Shein</option>
-              <option value="shopify">Shopify</option>
-              <option value="tiktok">TikTok Shop</option>
-              <option value="wish">Wish</option>
-            </select>
-          </label>
-
-          <div class="tier-badge" id="pvTierBadge">
-            <span class="tag"></span>
-            <span class="info"></span>
-          </div>
-
-          <label class="field">
-            <span>Preço de venda atual</span>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input id="pvAtual" type="number" inputmode="decimal" step="0.01" min="0" value="1499.00">
-            </div>
-          </label>
-
-          <label class="field">
-            <span>Preço de custo</span>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input id="pvCusto" type="number" inputmode="decimal" step="0.01" min="0" value="483.07">
-            </div>
-          </label>
-
-          <label class="field">
-            <span>Frete pago por nós</span>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input id="pvFrete" type="number" inputmode="decimal" step="0.01" min="0" value="0">
-            </div>
-          </label>
-
-          <label class="field">
-            <span>Comissão do Mercado Livre</span>
-            <div class="input-suffix">
-              <input id="pvComissao" type="number" inputmode="decimal" step="0.1" min="0" value="19">
-              <span>%</span>
-            </div>
-          </label>
-
-          <label class="field">
-            <span>Adicional da plataforma</span>
-            <div class="input-suffix">
-              <input id="pvAdicionalPct" type="number" inputmode="decimal" step="0.1" min="0" value="8">
-              <span>%</span>
-            </div>
-          </label>
-
-          <label class="field">
-            <span>Adicional fixo</span>
-            <div class="input-prefix">
-              <span>R$</span>
-              <input id="pvAdicionalRS" type="number" inputmode="decimal" step="0.01" min="0" value="0">
-            </div>
-          </label>
-
-          <label class="field">
-            <span>Meta de margem</span>
-            <div class="input-suffix">
-              <input id="pvMeta" type="number" inputmode="decimal" step="0.1" min="0" value="30">
-              <span>%</span>
-            </div>
-          </label>
-        </div>
-
-        <div class="calc-output">
-          <h2 class="card-kicker">Resultado</h2>
-
-          <div class="gauge-wrap">
-            <svg viewBox="0 0 220 130" class="gauge" aria-hidden="true">
-              <path class="gauge-track" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100"/>
-              <path class="gauge-fill" id="gaugeFill2" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100" stroke-dasharray="0 100"/>
-            </svg>
-            <div class="gauge-center">
-              <span class="gauge-value" id="gaugeValue2">0,0%</span>
-              <span class="gauge-label">margem real</span>
-            </div>
-          </div>
-
-          <div class="status-badge" id="statusBadge">—</div>
-
-          <ul class="breakdown">
-            <li><span class="swatch s-custo" aria-hidden="true"></span>Custo total <span id="pvBdCusto">R$ 0,00</span></li>
-            <li><span class="swatch s-comissao" aria-hidden="true"></span>Comissão <span id="pvBdComissao">R$ 0,00</span></li>
-            <li><span class="swatch s-adicional" aria-hidden="true"></span>Adicional <span id="pvBdAdicional">R$ 0,00</span></li>
-            <li><span class="swatch s-margem" aria-hidden="true"></span>Lucro líquido <span id="pvBdLucro">R$ 0,00</span></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
  
   <!-- ============ FICHA TÉCNICA / COMO FUNCIONA ============ -->
   <section id="como-funciona" class="manual">
@@ -1147,74 +1022,15 @@ function calcularPreco() {
   document.getElementById('dtPreco').textContent = fmtBRL(preco);
 }
 
-/* ============================================================
-   Calculadora 2 — conferir um anúncio existente
-   ============================================================ */
-function calcularConferencia() {
-  const mp = document.getElementById('pvMp').value;
-  const cfg = MARKETPLACES[mp];
-  const isShopee = mp === 'shopee';
 
-  const pvAtual = numFrom('pvAtual');
-  const pvCusto = numFrom('pvCusto');
-  const pvFrete = numFrom('pvFrete');
-  const pvComissao = isShopee ? 0 : numFrom('pvComissao');
-  const pvAdicionalPct = isShopee ? 0 : numFrom('pvAdicionalPct');
-  const pvAdicionalRS = isShopee ? 0 : numFrom('pvAdicionalRS');
-  const pvMeta = numFrom('pvMeta');
-
-  let comissaoValor, adicionalValor, custoTotal, margemReal;
-
-  if (isShopee && pvAtual > 0) {
-    const faixa = shopeeTier(pvAtual);
-    comissaoValor = pvAtual * faixa.comissao / 100;
-    adicionalValor = faixa.tarifa;
-    custoTotal = pvCusto + pvFrete;
-    const lucro = pvAtual - comissaoValor - faixa.tarifa - custoTotal;
-    margemReal = (lucro / pvAtual) * 100;
-    atualizarTierBadge('pvTierBadge','pvTierTag','pvTierInfo',faixa);
-  } else {
-    document.getElementById('pvTierBadge').classList.remove('ativo');
-    custoTotal = pvCusto + pvFrete + pvAdicionalRS;
-    comissaoValor = pvAtual * pvComissao / 100;
-    adicionalValor = pvAtual * pvAdicionalPct / 100;
-    const lucro = pvAtual - comissaoValor - adicionalValor - custoTotal;
-    margemReal = pvAtual > 0 ? (lucro / pvAtual) * 100 : 0;
-  }
-
-  document.getElementById('pvBdCusto').textContent = fmtBRL(custoTotal);
-  document.getElementById('pvBdComissao').textContent = fmtBRL(comissaoValor);
-  document.getElementById('pvBdAdicional').textContent = fmtBRL(adicionalValor);
-  document.getElementById('pvBdLucro').textContent = fmtBRL(pvAtual - comissaoValor - adicionalValor - custoTotal);
-
-  const atingeMeta = margemReal >= pvMeta - 0.05;
-  setGauge('gaugeFill2','gaugeValue2',margemReal,atingeMeta);
-
-  const badge = document.getElementById('statusBadge');
-  badge.classList.remove('bom','ruim');
-  if (pvAtual <= 0) {
-    badge.textContent = 'Informe o preço de venda';
-  } else if (atingeMeta) {
-    badge.classList.add('bom');
-    badge.textContent = margemReal > pvMeta + 0.5 ? 'Acima da meta' : 'Na meta';
-  } else {
-    badge.classList.add('ruim');
-    badge.textContent = 'Abaixo da meta';
-  }
-}
 
 /* ============================================================
    Listeners
    ============================================================ */
 document.querySelectorAll('#calculadora input').forEach(el => el.addEventListener('input', calcularPreco));
-document.querySelectorAll('#conferir input').forEach(el => el.addEventListener('input', calcularConferencia));
 document.getElementById('calcMp').addEventListener('change', function() {
   aplicarMP('calcMp','');
   calcularPreco();
-});
-document.getElementById('pvMp').addEventListener('change', function() {
-  aplicarMP('pvMp','pv');
-  calcularConferencia();
 });
 
 document.getElementById('btnDetalhar').addEventListener('click', function() {
@@ -1226,9 +1042,7 @@ document.getElementById('btnDetalhar').addEventListener('click', function() {
 });
 
 aplicarMP('calcMp','');
-aplicarMP('pvMp','pv');
 calcularPreco();
-calcularConferencia();
 
 </script>
 </body>
