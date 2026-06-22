@@ -225,17 +225,6 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
 .switch input:checked + .switch-slider{ background: var(--verde-pix); }
 .switch input:checked + .switch-slider::before{ transform: translateX(20px); background: #fff; }
 
-/* ── gauge ── */
-.gauge-wrap{ position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
-.gauge{ width: 100%; height: auto; display:block; }
-.gauge-track{ fill:none; stroke: var(--painel-linha); stroke-width: 16; stroke-linecap: round; }
-.gauge-fill{ fill:none; stroke: var(--ciano); stroke-width: 16; stroke-linecap: round;
-  transition: stroke-dasharray .25s ease; filter: drop-shadow(0 0 6px rgba(6,182,212,.3)); }
-.gauge-fill--good{ stroke: var(--verde); filter: drop-shadow(0 0 6px rgba(34,197,94,.35)); }
-.gauge-center{ position:absolute; left:50%; bottom: 6px; transform: translateX(-50%); text-align:center; }
-.gauge-value{ display:block; font-family: var(--fonte-display); font-size: 2rem; font-weight: 800; }
-.gauge-label{ display:block; font-family: var(--fonte-dado); font-size: .72rem; color: var(--texto-painel-mudo); text-transform: uppercase; letter-spacing: .08em; }
-
 /* ── preço readout ── */
 .preco-readout{
   text-align:center; margin: 22px 0 4px;
@@ -549,17 +538,6 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
         <div class="calc-output">
           <p class="card-kicker">Resultado</p>
 
-          <div class="gauge-wrap">
-            <svg viewBox="0 0 220 130" class="gauge" aria-hidden="true">
-              <path class="gauge-track" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100"/>
-              <path class="gauge-fill gauge-fill--good" id="gaugeFill" d="M 20 110 A 90 90 0 0 1 200 110" pathLength="100" stroke-dasharray="0 100"/>
-            </svg>
-            <div class="gauge-center">
-              <span class="gauge-value" id="gaugeValue">0,0%</span>
-              <span class="gauge-label">margem real</span>
-            </div>
-          </div>
-
           <div class="preco-readout">
             <span class="preco-label">Preço de venda sugerido</span>
             <span class="preco-value" id="precoFinal">R$ 0,00</span>
@@ -809,13 +787,6 @@ const el    = id => document.getElementById(id);
 const txt   = (id, v) => el(id).textContent = v;
 const html  = (id, v) => el(id).innerHTML = v;
 
-const GAUGE_MAX = 60;
-function setGauge(pctVal) {
-  const clamped = Math.max(0, Math.min(GAUGE_MAX, pctVal));
-  el('gaugeFill').setAttribute('stroke-dasharray', `${(clamped/GAUGE_MAX)*100} 100`);
-  txt('gaugeValue', pct(pctVal));
-}
-
 /* ============================================================
    SHOPEE — busca faixa e itera até convergir
    ============================================================ */
@@ -931,7 +902,6 @@ function calcular() {
       warn.textContent = 'Não foi possível calcular com a margem desejada. Reduza a margem ou verifique os dados.';
       txt('precoFinal', '—');
       ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
-      setGauge(0);
       limparShopee();
       return;
     }
@@ -962,9 +932,6 @@ function calcular() {
     } else {
       el('precoPix').classList.remove('ativo');
     }
-
-    // ── gauge
-    setGauge(margem);
 
     // ── badges
     el('badgeTier').classList.add('ativo');
@@ -1082,7 +1049,6 @@ function calcular() {
     txt('precoFinal', '—');
     ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
     txt('dt01Res','—'); txt('dt02Res','—'); txt('dt03Res','—'); txt('dt04Res','—');
-    setGauge(0);
     return;
   }
 
@@ -1094,7 +1060,6 @@ function calcular() {
 
   // outputs
   txt('precoFinal', R$(preco));
-  setGauge(margem);
 
   txt('bdCusto',    R$(custoTotal));
   txt('bdComissao', R$(preco * comissao/100));
