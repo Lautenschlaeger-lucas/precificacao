@@ -205,6 +205,26 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
 .badge-pix{ border-color: rgba(16,185,129,.35); color: #6EE7B7; background: rgba(16,185,129,.08); }
 .badge-pix .tag{ background: var(--verde-pix); }
 
+/* ── toggle switch ── */
+.toggle-field{ display: none; margin-bottom: 16px; }
+.toggle-field.ativo{ display: block; }
+.toggle-row{ display:flex; align-items:center; justify-content:space-between; }
+.toggle-label{ font-size:.86rem; color: var(--texto-painel-mudo); }
+.switch{ position:relative; display:inline-block; width:44px; height:24px; flex-shrink:0; }
+.switch input{ opacity:0; width:0; height:0; }
+.switch-slider{
+  position:absolute; cursor:pointer; inset:0;
+  background: var(--painel-linha); border-radius:24px;
+  transition: background .2s;
+}
+.switch-slider::before{
+  content:''; position:absolute; height:18px; width:18px;
+  left:3px; bottom:3px; background: var(--texto-painel-mudo);
+  border-radius:50%; transition: transform .2s;
+}
+.switch input:checked + .switch-slider{ background: var(--verde-pix); }
+.switch input:checked + .switch-slider::before{ transform: translateX(20px); background: #fff; }
+
 /* ── gauge ── */
 .gauge-wrap{ position: relative; width: 100%; max-width: 320px; margin: 0 auto; }
 .gauge{ width: 100%; height: auto; display:block; }
@@ -463,6 +483,18 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
             <span class="tag">Subsídio Pix</span>
             <span id="badgePixInfo"></span>
           </div>
+
+          <!-- toggle: subsidio pix (visivel apenas no shopee) -->
+          <label class="toggle-field" id="pixToggleWrap">
+            <span class="field-label">Subsídio Pix</span>
+            <div class="toggle-row">
+              <span class="toggle-label">Aplicar subsídio no cálculo</span>
+              <label class="switch">
+                <input type="checkbox" id="pixToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </label>
 
           <label class="field">
             <span class="field-label">Preço de custo</span>
@@ -862,6 +894,8 @@ function aplicarMP() {
   el('comissao').disabled    = isShopee;
   el('adicionalPct').disabled = isShopee;
   el('adicionalRS').disabled  = isShopee;
+
+  el('pixToggleWrap').classList.toggle('ativo', isShopee);
 }
 
 /* ============================================================
@@ -912,7 +946,7 @@ function calcular() {
     const tarifaV = tarifaVar
       ? preco * faixa.tarifaPct / 100                 // tarifa variável em R$
       : faixa.tar;                                    // tarifa fixa em R$
-    const pixPct  = faixa.pixPct;
+    const pixPct  = el('pixToggle').checked ? faixa.pixPct : 0;
     const precoPix = preco * (1 - pixPct/100);
     const descPix  = preco - precoPix;
     const temPix   = pixPct > 0;
@@ -1024,7 +1058,7 @@ function calcular() {
         `<small style="color:var(--texto-painel-mudo)">A Shopee aplica ${pct(pixPct)} de subsídio Pix para o comprador — esse custo recai sobre o vendedor</small>`);
       txt('dt05Res', R$(precoPix));
       html('dt05Nota',
-        `<span style="color:var(--texto-painel-mudo)">Diferença absorvida: ${R$(descPix)} | Faixa ${faixa.id}: ${faixa.com}% + R$ ${tarifa}</span>`);
+        `<span style="color:var(--texto-painel-mudo)">Diferença absorvida: ${R$(descPix)} | Faixa ${faixa.id}: ${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.',',')}</span>`);
     } else {
       el('dt05Pix').classList.remove('ativo');
     }
@@ -1094,6 +1128,7 @@ function calcular() {
    ============================================================ */
 document.querySelectorAll('#calculadora input').forEach(e => e.addEventListener('input', calcular));
 el('calcMp').addEventListener('change', () => { aplicarMP(); calcular(); });
+el('pixToggle').addEventListener('change', calcular);
 el('btnDetalhar').addEventListener('click', function() {
   const open = this.getAttribute('aria-expanded') === 'true';
   this.setAttribute('aria-expanded', !open);
