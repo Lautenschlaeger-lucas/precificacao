@@ -830,26 +830,26 @@ function shopeeFaixa(preco) {
   a tarifa é VARIÁVEL (% do preço) e entra NO DIVISOR.
   Nas demais faixas a tarifa é FIXA em R$ e entra no NUMERADOR.
 */
-function calcPrecoFaixa(custoBase, margem, faixa) {
+function calcPrecoFaixa(custoBase, margem, faixa, adicPct) {
   if (faixa.tarifaPct > 0) {
-    // Tarifa variável: Preço = Custo ÷ [1 − (margem% + com% + tarifaPct%) / 100]
-    const soma = margem + faixa.com + faixa.tarifaPct;
+    // Tarifa variável: Preço = Custo ÷ [1 − (margem% + com% + tarifaPct% + adic%) / 100]
+    const soma = margem + faixa.com + faixa.tarifaPct + adicPct;
     if (soma >= 100) return null;
     return custoBase / (1 - soma/100);
   } else {
-    // Tarifa fixa: Preço = (Custo + tarifa) ÷ [1 − (margem% + com%) / 100]
-    const soma = margem + faixa.com;
+    // Tarifa fixa: Preço = (Custo + tarifa) ÷ [1 − (margem% + com% + adic%) / 100]
+    const soma = margem + faixa.com + adicPct;
     if (soma >= 100) return null;
     return (custoBase + faixa.tar) / (1 - soma/100);
   }
 }
 
-function shopeeCalc(custoBase, margem) {
+function shopeeCalc(custoBase, margem, adicPct) {
   const faixas = MP.shopee.faixas;
 
   // tentativa direta em cada faixa
   for (const f of faixas) {
-    const preco = calcPrecoFaixa(custoBase, margem, f);
+    const preco = calcPrecoFaixa(custoBase, margem, f, adicPct);
     if (preco === null || preco <= 0 || !isFinite(preco)) continue;
     if (preco >= f.min && preco <= f.max) return { preco, faixa: f };
   }
@@ -857,7 +857,7 @@ function shopeeCalc(custoBase, margem) {
   // iteração de convergência (resolve casos limítrofes entre faixas)
   let faixa = faixas[3]; // começa na faixa 3 (R$100–199,99 — mais comum)
   for (let i = 0; i < 15; i++) {
-    const preco = calcPrecoFaixa(custoBase, margem, faixa);
+    const preco = calcPrecoFaixa(custoBase, margem, faixa, adicPct);
     if (preco === null || preco <= 0 || !isFinite(preco)) {
       faixa = faixas[faixas.length-1]; continue;
     }
@@ -868,7 +868,7 @@ function shopeeCalc(custoBase, margem) {
 
   // fallback na última faixa
   const f = faixas[faixas.length-1];
-  const preco = calcPrecoFaixa(custoBase, margem, f);
+  const preco = calcPrecoFaixa(custoBase, margem, f, adicPct);
   if (!preco || preco <= 0) return null;
   return { preco, faixa: f };
 }
@@ -892,7 +892,6 @@ function aplicarMP() {
   }
 
   el('comissao').disabled    = isShopee;
-  el('adicionalPct').disabled = isShopee;
   el('adicionalRS').disabled  = isShopee;
 
   el('pixToggleWrap').classList.toggle('ativo', isShopee);
@@ -917,14 +916,15 @@ function calcular() {
   const isShopee = mpId === 'shopee';
   const warn    = el('calcWarning');
 
-  const custo  = val('custo');
-  const frete  = val('frete');
-  const margem = val('margem');
+  const custo    = val('custo');
+  const frete    = val('frete');
+  const margem  = val('margem');
+  const adicPct = val('adicionalPct');
 
   /* ────────── SHOPEE ────────── */
   if (isShopee) {
     const custoBase = custo + frete;
-    const result    = shopeeCalc(custoBase, margem);
+    const result    = shopeeCalc(custoBase, margem, adicPct);
 
     if (!result || !isFinite(result.preco) || result.preco <= 0) {
       warn.hidden = false;
@@ -980,14 +980,17 @@ function calcular() {
       el('badgePix').classList.remove('ativo');
     }
 
+    // valores adicionais em R$
+    const adicPctV = preco * adicPct / 100;
+
     // ── breakdown
     txt('bdCusto',    R$(custoBase));
     txt('bdComissao', R$(comV));
-    txt('bdTarifa',   R$(tarifaV));
+    txt('bdTarifa',   R$(tarifaV + adicPctV));
     txt('bdMargem',   R$(margemV));
     txt('bdLabelComissao', `Comissão Shopee (${faixa.com}%)`);
     txt('bdLabelTarifa', tarifaVar
-      ? `Tarifa variável faixa ${faixa.id} (${faixa.tarifaPct}% do preço)`
+      ? `Tarifa var. faixa ${faixa.id} (${faixa.tarifaPct}%)`
       : `Tarifa fixa faixa ${faixa.id}`);
 
     if (temPix) {
@@ -1000,7 +1003,7 @@ function calcular() {
     // ── detalhamento passo a passo
     if (tarifaVar) {
       // ── FAIXA 0: tarifa % entra no divisor, numerador = só custo base
-      const somaPct = margem + faixa.com + faixa.tarifaPct;
+      const somaPct = margem + faixa.com + faixa.tarifaPct + adicPct;
       const divisor = 1 - somaPct/100;
 
       html('dt01Desc',
@@ -1009,7 +1012,7 @@ function calcular() {
       txt('dt01Res', R$(custoBase));
 
       html('dt02Desc',
-        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id}) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa variável)<br>`+
+        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id}) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa variável)${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
         `<small style="color:var(--texto-painel-mudo)">A tarifa de ${pct(faixa.tarifaPct)} é cobrada sobre o preço de venda → some no divisor junto com margem e comissão</small>`);
       txt('dt02Res', pct(somaPct));
 
@@ -1025,7 +1028,7 @@ function calcular() {
 
     } else {
       // ── FAIXAS 1–5: tarifa fixa entra no numerador
-      const somaPct = margem + faixa.com;
+      const somaPct = margem + faixa.com + adicPct;
       const divisor = 1 - somaPct/100;
       const ctBase  = custoBase + faixa.tar;
 
@@ -1035,7 +1038,7 @@ function calcular() {
       txt('dt01Res', R$(ctBase));
 
       html('dt02Desc',
-        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})<br>`+
+        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
         `<small style="color:var(--texto-painel-mudo)">Ambos incidem sobre o preço de venda → somam no divisor. A tarifa já foi somada no custo acima.</small>`);
       txt('dt02Res', pct(somaPct));
 
@@ -1070,7 +1073,6 @@ function calcular() {
   limparShopee();
 
   const comissao    = val('comissao');
-  const adicPct     = val('adicionalPct');
   const adicRS      = val('adicionalRS');
   const somaPct     = margem + comissao + adicPct;
 
