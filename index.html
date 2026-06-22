@@ -710,7 +710,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
                 <span>Faixa de preço</span><span>Comissão + Tarifa</span><span>Subsídio Pix</span>
               </div>
               <div class="tf-row" style="background:rgba(239,68,68,.06)" role="row">
-                <span>Abaixo de R$ 8,00 ⚠️</span><span>20% + <strong>50% do preço</strong></span><span class="tf-sem-pix">—</span>
+                <span>Abaixo de R$ 8,00 ⚠️</span><span><strong>50% do preço</strong></span><span class="tf-sem-pix">—</span>
               </div>
               <div class="tf-row" role="row">
                 <span>R$ 8,00 a R$ 79,99</span><span>20% + R$ 4,00</span><span class="tf-sem-pix">—</span>
@@ -728,9 +728,9 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
                 <span>Acima de R$ 500,00</span><span>14% + R$ 26,00</span><span class="tf-pix">8%</span>
               </div>
             </div>
-            <p>⚠️ <strong>Atenção faixa abaixo de R$ 8,00:</strong> a tarifa não é fixa — é <strong>50% do preço de venda</strong>. Por ser variável (proporcional ao preço), ela entra no <strong>divisor</strong> junto com margem e comissão, não no numerador como custo. A fórmula muda:</p>
+            <p>⚠️ <strong>Atenção faixa abaixo de R$ 8,00:</strong> a tarifa não é fixa — é <strong>50% do preço de venda</strong> (já inclui a comissão). Por ser variável (proporcional ao preço), ela entra no <strong>divisor</strong> junto com margem, não no numerador como custo. A fórmula muda:</p>
             <div class="formula-bloco">
-              <code>Preço = Custo ÷ [1 − (margem% + 20% comissão + 50% tarifa) ÷ 100]</code>
+              <code>Preço = Custo ÷ [1 − (margem% + 50% tarifa) ÷ 100]</code>
             </div>
             <p>O <strong>Subsídio Pix</strong> é um desconto que a Shopee oferece ao comprador quando ele paga via Pix — e esse desconto é absorvido pelo vendedor. A calculadora mostra os dois preços: o preço de venda anunciado e o <strong>preço efetivo com Pix</strong>, que é o valor real recebido após a venda.</p>
             <p class="exemplo-nota">Exemplo Pix: item na faixa R$ 200–499,99. Preço de venda = R$ 350,00. Com Pix (5%): R$ 350,00 × 0,95 = <strong>R$ 332,50</strong> líquido recebido.</p>
@@ -788,7 +788,7 @@ const MP = {
       Fórmula: Preço = Custo ÷ [1 − (margem% + comissão% + 50%)]
     */
     faixas: [
-      { id:0, min:0,    max:7.99,   com:20, tar:0,  tarifaPct:50, pixPct:0 },
+      { id:0, min:0,    max:7.99,   com:0, tar:0,   tarifaPct:50, pixPct:0 },
       { id:1, min:8,    max:79.99,  com:20, tar:4,  tarifaPct:0,  pixPct:0 },
       { id:2, min:80,   max:99.99,  com:14, tar:16, tarifaPct:0,  pixPct:5 },
       { id:3, min:100,  max:199.99, com:14, tar:20, tarifaPct:0,  pixPct:5 },
@@ -970,7 +970,7 @@ function calcular() {
     el('badgeTier').classList.add('ativo');
     txt('badgeTierTag',  `Faixa ${faixa.id}`);
     txt('badgeTierInfo', tarifaVar
-      ? `${faixa.com}% + ${faixa.tarifaPct}% do preço`
+      ? `${faixa.tarifaPct}% do preço`
       : `${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.',',')}`);
 
     if (temPix) {
@@ -990,7 +990,7 @@ function calcular() {
     txt('bdMargem',   R$(margemV));
     txt('bdLabelComissao', `Comissão Shopee (${faixa.com}%)`);
     txt('bdLabelTarifa', tarifaVar
-      ? `Tarifa var. faixa ${faixa.id} (${faixa.tarifaPct}%)`
+      ? `Tarifa única faixa ${faixa.id} (${faixa.tarifaPct}%)`
       : `Tarifa fixa faixa ${faixa.id}`);
 
     if (temPix) {
@@ -1008,12 +1008,12 @@ function calcular() {
 
       html('dt01Desc',
         `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
-        `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id} (abaixo de R$ 8,00): a tarifa é <strong style="color:var(--texto-painel)">50% do preço de venda</strong> — portanto é variável e NÃO entra no numerador; ela vai para o divisor no passo 02</small>`);
+        `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id} (abaixo de R$ 8,00): a tarifa única de <strong style="color:var(--texto-painel)">50% do preço de venda</strong> já inclui comissão + tarifa — é variável e NÃO entra no numerador; vai para o divisor no passo 02</small>`);
       txt('dt01Res', R$(custoBase));
 
       html('dt02Desc',
-        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id}) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa variável)${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">A tarifa de ${pct(faixa.tarifaPct)} é cobrada sobre o preço de venda → some no divisor junto com margem e comissão</small>`);
+        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa única faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
+        `<small style="color:var(--texto-painel-mudo)">A tarifa de ${pct(faixa.tarifaPct)} sobre o preço de venda já embute a comissão — some no divisor junto com a margem</small>`);
       txt('dt02Res', pct(somaPct));
 
       html('dt03Desc',
