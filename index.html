@@ -225,6 +225,11 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
 .switch input:checked + .switch-slider{ background: var(--verde-pix); }
 .switch input:checked + .switch-slider::before{ transform: translateX(20px); background: #fff; }
 
+/* ── método toggle ── */
+.method-row{ display:flex; align-items:center; gap:10px; }
+.method-lbl{ font-size:.82rem; color: var(--texto-painel-mudo); transition: color .2s; }
+.method-lbl.ativo{ color: var(--texto-painel); font-weight: 600; }
+
 /* ── preço readout ── */
 .preco-readout{
   text-align:center; margin: 22px 0 4px;
@@ -460,6 +465,19 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
               <option value="wish">Wish</option>
             </select>
           </label>
+
+          <!-- toggle: método de precificação -->
+          <div class="field" id="methodToggleWrap">
+            <span class="field-label">Método de precificação</span>
+            <div class="method-row">
+              <span class="method-lbl" id="methodLblVenda">Por preço de venda</span>
+              <label class="switch">
+                <input type="checkbox" id="methodToggle">
+                <span class="switch-slider"></span>
+              </label>
+              <span class="method-lbl" id="methodLblCusto">Por preço de custo</span>
+            </div>
+          </div>
 
           <!-- badge: faixa shopee -->
           <div class="badge badge-tier" id="badgeTier">
@@ -897,7 +915,10 @@ function calcular() {
   /* ────────── SHOPEE ────────── */
   if (isShopee) {
     const custoBase = custo + frete;
-    const result    = shopeeCalc(custoBase, margem, adicPct);
+    const method    = el('methodToggle').checked ? 'custo' : 'venda';
+    const margemEff = method === 'custo' ? 0 : margem;
+    const precoBase = method === 'custo' ? custoBase * (1 + margem/100) : custoBase;
+    const result    = shopeeCalc(precoBase, margemEff, adicPct);
 
     if (!result || !isFinite(result.preco) || result.preco <= 0) {
       warn.hidden = false;
@@ -913,7 +934,9 @@ function calcular() {
 
     // valores derivados
     const comV    = preco * faixa.com / 100;          // comissão em R$
-    const margemV = preco * margem / 100;             // margem em R$
+    const margemV = method === 'custo'
+      ? custoBase * margem / 100                       // margem fixa sobre o custo
+      : preco * margem / 100;                          // margem sobre o preço
     const tarifaVar = faixa.tarifaPct > 0;            // true = tarifa é % do preço
     const tarifaV = tarifaVar
       ? preco * faixa.tarifaPct / 100                 // tarifa variável em R$
@@ -971,55 +994,101 @@ function calcular() {
 
     // ── detalhamento passo a passo
     if (tarifaVar) {
-      // ── FAIXA 0: tarifa % entra no divisor, numerador = só custo base
-      const somaPct = margem + faixa.com + faixa.tarifaPct + adicPct;
-      const divisor = 1 - somaPct/100;
+      // ── FAIXA 0: tarifa % entra no divisor
+      const pctDiv = margemEff + faixa.com + faixa.tarifaPct + adicPct;
+      const divisor = 1 - pctDiv/100;
 
-      html('dt01Desc',
-        `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
-        `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id} (abaixo de R$ 8,00): a tarifa única de <strong style="color:var(--texto-painel)">50% do preço de venda</strong> já inclui comissão + tarifa — é variável e NÃO entra no numerador; vai para o divisor no passo 02</small>`);
-      txt('dt01Res', R$(custoBase));
+      if (method === 'custo') {
+        html('dt01Desc',
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
+          `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: tarifa de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, entra no divisor</small>`);
+        txt('dt01Res', R$(custoBase));
 
-      html('dt02Desc',
-        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa única faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">A tarifa de ${pct(faixa.tarifaPct)} sobre o preço de venda já embute a comissão — some no divisor junto com a margem</small>`);
-      txt('dt02Res', pct(somaPct));
+        html('dt02Desc',
+          `Preço base = ${R$(custoBase)} × (1 + ${pct(margem)}) = ${R$(custoBase)} × ${dec3(1 + margem/100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada <strong>sobre o custo</strong></small>`);
+        txt('dt02Res', R$(precoBase));
 
-      html('dt03Desc',
-        `Divisor = 1 − (${pct(somaPct)} ÷ 100) = 1 − ${dec3(somaPct/100)}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">Fatia do preço que sobra após descontar margem + comissão + tarifa variável</small>`);
-      txt('dt03Res', dec3(divisor));
+        html('dt03Desc',
+          `Divisor = 1 − (${pct(faixa.tarifaPct)} + ${pct(adicPct)}) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Apenas a tarifa única de ${pct(faixa.tarifaPct)} e adicional% no divisor</small>`);
+        txt('dt03Res', dec3(divisor));
 
-      html('dt04Desc',
-        `Preço de venda = ${R$(custoBase)} ÷ ${dec3(divisor)}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">Só o custo base no numerador — a tarifa variável já está embutida no divisor</small>`);
-      txt('dt04Res', R$(preco));
+        html('dt04Desc',
+          `Preço de venda = ${R$(precoBase)} ÷ ${dec3(divisor)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, tarifa sobre o preço</small>`);
+        txt('dt04Res', R$(preco));
+      } else {
+        html('dt01Desc',
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
+          `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: tarifa única de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, vai para o divisor</small>`);
+        txt('dt01Res', R$(custoBase));
+
+        html('dt02Desc',
+          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Tudo sobre o preço de venda → soma no divisor</small>`);
+        txt('dt02Res', pct(pctDiv));
+
+        html('dt03Desc',
+          `Divisor = 1 − (${pct(pctDiv)} ÷ 100) = 1 − ${dec3(pctDiv/100)}<br>`);
+        txt('dt03Res', dec3(divisor));
+
+        html('dt04Desc',
+          `Preço de venda = ${R$(custoBase)} ÷ ${dec3(divisor)}<br>`);
+        txt('dt04Res', R$(preco));
+      }
 
     } else {
-      // ── FAIXAS 1–5: tarifa fixa entra no numerador
-      const somaPct = margem + faixa.com + adicPct;
-      const divisor = 1 - somaPct/100;
-      const ctBase  = custoBase + faixa.tar;
+      // ── FAIXAS 1–5: tarifa fixa no numerador
+      const pctDiv = margemEff + faixa.com + adicPct;
+      const divisor = 1 - pctDiv/100;
+      const custoComTarifa = custoBase + faixa.tar;
 
-      html('dt01Desc',
-        `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(faixa.tar)}</strong> (tarifa fixa faixa ${faixa.id})<br>`+
-        `<small style="color:var(--texto-painel-mudo)">Tarifa fixa em R$ não varia com o preço → entra no numerador como custo</small>`);
-      txt('dt01Res', R$(ctBase));
+      if (method === 'custo') {
+        const totalComMargem = precoBase + faixa.tar;
+        html('dt01Desc',
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Tarifa fixa de <strong>${R$(faixa.tar)}</strong> ainda não entra — vai somar depois da margem</small>`);
+        txt('dt01Res', R$(custoBase));
 
-      html('dt02Desc',
-        `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">Ambos incidem sobre o preço de venda → somam no divisor. A tarifa já foi somada no custo acima.</small>`);
-      txt('dt02Res', pct(somaPct));
+        html('dt02Desc',
+          `Preço base = ${R$(custoBase)} × (1 + ${pct(margem)}) = ${R$(custoBase)} × ${dec3(1 + margem/100)}<br>`+
+          `+ tarifa fixa = ${R$(precoBase)} + ${R$(faixa.tar)} = <strong>${R$(totalComMargem)}</strong><br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} sobre o custo, depois tarifa somada</small>`);
+        txt('dt02Res', R$(totalComMargem));
 
-      html('dt03Desc',
-        `Divisor = 1 − (${pct(somaPct)} ÷ 100) = 1 − ${dec3(somaPct/100)}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">Representa a fatia do preço que sobra após descontar todas as % acima</small>`);
-      txt('dt03Res', dec3(divisor));
+        html('dt03Desc',
+          `Divisor = 1 − (${pct(faixa.com)} + ${pct(adicPct)}) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Apenas comissão e adicional% no divisor — margem já está no numerador</small>`);
+        txt('dt03Res', dec3(divisor));
 
-      html('dt04Desc',
-        `Preço de venda = ${R$(ctBase)} ÷ ${dec3(divisor)}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">Divide o custo total pelo divisor para que a margem seja sobre o preço, não sobre o custo</small>`);
-      txt('dt04Res', R$(preco));
+        html('dt04Desc',
+          `Preço de venda = ${R$(totalComMargem)} ÷ ${dec3(divisor)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, comissão e taxas sobre o preço</small>`);
+        txt('dt04Res', R$(preco));
+
+      } else {
+        const ctBase = custoBase + faixa.tar;
+        html('dt01Desc',
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(faixa.tar)}</strong> (tarifa fixa faixa ${faixa.id})<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Tarifa fixa não varia com o preço → entra no numerador como custo</small>`);
+        txt('dt01Res', R$(ctBase));
+
+        html('dt02Desc',
+          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Todos sobre o preço de venda → somam no divisor</small>`);
+        txt('dt02Res', pct(pctDiv));
+
+        html('dt03Desc',
+          `Divisor = 1 − (${pct(pctDiv)} ÷ 100) = 1 − ${dec3(pctDiv/100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Fatia que sobra após descontar as %</small>`);
+        txt('dt03Res', dec3(divisor));
+
+        html('dt04Desc',
+          `Preço de venda = ${R$(ctBase)} ÷ ${dec3(divisor)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem sobre o preço, não sobre o custo</small>`);
+        txt('dt04Res', R$(preco));
+      }
     }
 
     // passo 05 — pix
@@ -1027,10 +1096,10 @@ function calcular() {
       el('dt05Pix').classList.add('ativo');
       html('dt05Desc',
         `Preço com Pix = ${R$(preco)} × (1 − ${pct(pixPct)}) = ${R$(preco)} × ${dec3(1 - pixPct/100)}<br>`+
-        `<small style="color:var(--texto-painel-mudo)">A Shopee aplica ${pct(pixPct)} de subsídio Pix para o comprador — esse custo recai sobre o vendedor</small>`);
+        `<small style="color:var(--texto-painel-mudo)">Subsídio Pix de ${pct(pixPct)} absorvido pelo vendedor</small>`);
       txt('dt05Res', R$(precoPix));
       html('dt05Nota',
-        `<span style="color:var(--texto-painel-mudo)">Diferença absorvida: ${R$(descPix)} | Faixa ${faixa.id}: ${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.',',')}</span>`);
+        `<span style="color:var(--texto-painel-mudo)">Diferença: ${R$(descPix)} | Faixa ${faixa.id}: ${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.',',')}</span>`);
     } else {
       el('dt05Pix').classList.remove('ativo');
     }
@@ -1041,11 +1110,16 @@ function calcular() {
   /* ────────── MARKETPLACE SIMPLES ────────── */
   const comissao    = val('comissao');
   const adicRS      = val('adicionalRS');
-  const somaPct     = margem + comissao + adicPct;
+  const custoTotal  = custo + frete + adicRS;
+  const method      = el('methodToggle').checked ? 'custo' : 'venda';
 
-  if (somaPct >= 100) {
+  // valida
+  const validPct = method === 'custo' ? comissao + adicPct : margem + comissao + adicPct;
+  if (validPct >= 100) {
     warn.hidden = false;
-    warn.textContent = `Margem + comissão + adicional somam ${pct(somaPct)} — igual ou acima de 100% do preço. Reduza algum percentual.`;
+    warn.textContent = method === 'custo'
+      ? `Comissão + adicional somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`
+      : `Margem + comissão + adicional somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`;
     txt('precoFinal', '—');
     ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
     txt('dt01Res','—'); txt('dt02Res','—'); txt('dt03Res','—'); txt('dt04Res','—');
@@ -1054,9 +1128,10 @@ function calcular() {
 
   warn.hidden = true;
 
-  const divisor    = 1 - somaPct/100;
-  const custoTotal = custo + frete + adicRS;
-  const preco      = custoTotal / divisor;
+  const pctNoDivisor = method === 'custo' ? comissao + adicPct : margem + comissao + adicPct;
+  const divisor      = 1 - pctNoDivisor / 100;
+  const precoBase    = method === 'custo' ? custoTotal * (1 + margem/100) : null;
+  const preco        = method === 'custo' ? precoBase / divisor : custoTotal / divisor;
 
   // outputs
   txt('precoFinal', R$(preco));
@@ -1064,30 +1139,53 @@ function calcular() {
   txt('bdCusto',    R$(custoTotal));
   txt('bdComissao', R$(preco * comissao/100));
   txt('bdTarifa',   R$(preco * adicPct/100 + adicRS));
-  txt('bdMargem',   R$(preco * margem/100));
+  txt('bdMargem',   method === 'custo' ? R$(custoTotal * margem/100) : R$(preco * margem/100));
   txt('bdLabelComissao', 'Comissão');
   txt('bdLabelTarifa',   'Adicional');
 
   // detalhamento
-  html('dt01Desc',
-    `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(adicRS)}</strong> (adicional fixo em R$)<br>`+
-    `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base — não variam com o preço de venda</small>`);
-  txt('dt01Res', R$(custoTotal));
+  if (method === 'custo') {
+    html('dt01Desc',
+      `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(adicRS)}</strong> (adicional fixo)<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base</small>`);
+    txt('dt01Res', R$(custoTotal));
 
-  html('dt02Desc',
-    `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(comissao)}</strong> (comissão) + <strong>${pct(adicPct)}</strong> (adicional %)<br>`+
-    `<small style="color:var(--texto-painel-mudo)">Todos incidem sobre o preço de venda → somam juntos no divisor</small>`);
-  txt('dt02Res', pct(somaPct));
+    html('dt02Desc',
+      `Preço base = ${R$(custoTotal)} × (1 + ${pct(margem)}) = ${R$(custoTotal)} × ${dec3(1 + margem/100)}<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada <strong>sobre o custo</strong></small>`);
+    txt('dt02Res', R$(precoBase));
 
-  html('dt03Desc',
-    `Divisor = 1 − (${pct(somaPct)} ÷ 100) = 1 − ${dec3(somaPct/100)}<br>`+
-    `<small style="color:var(--texto-painel-mudo)">A fatia do preço que sobra depois de tirar todas as % é o divisor</small>`);
-  txt('dt03Res', dec3(divisor));
+    html('dt03Desc',
+      `Divisor = 1 − (${pct(comissao)} + ${pct(adicPct)}) ÷ 100 = 1 − ${dec3(pctNoDivisor/100)}<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Apenas comissão e adicional% no divisor — margem já embutida no preço base</small>`);
+    txt('dt03Res', dec3(divisor));
 
-  html('dt04Desc',
-    `Preço de venda = ${R$(custoTotal)} ÷ ${dec3(divisor)}<br>`+
-    `<small style="color:var(--texto-painel-mudo)">Resultado: a margem de ${pct(margem)} agora incide sobre o preço, não sobre o custo</small>`);
-  txt('dt04Res', R$(preco));
+    html('dt04Desc',
+      `Preço de venda = ${R$(precoBase)} ÷ ${dec3(divisor)}<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Resultado: ${pct(margem)} de margem sobre o custo, taxas sobre o preço final</small>`);
+    txt('dt04Res', R$(preco));
+
+  } else {
+    html('dt01Desc',
+      `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(adicRS)}</strong> (adicional fixo em R$)<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base — não variam com o preço de venda</small>`);
+    txt('dt01Res', R$(custoTotal));
+
+    html('dt02Desc',
+      `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(comissao)}</strong> (comissão) + <strong>${pct(adicPct)}</strong> (adicional %)<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Todos incidem sobre o preço de venda → somam juntos no divisor</small>`);
+    txt('dt02Res', pct(pctNoDivisor));
+
+    html('dt03Desc',
+      `Divisor = 1 − (${pct(pctNoDivisor)} ÷ 100) = 1 − ${dec3(pctNoDivisor/100)}<br>`+
+      `<small style="color:var(--texto-painel-mudo)">A fatia do preço que sobra depois de tirar todas as % é o divisor</small>`);
+    txt('dt03Res', dec3(divisor));
+
+    html('dt04Desc',
+      `Preço de venda = ${R$(custoTotal)} ÷ ${dec3(divisor)}<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Resultado: a margem de ${pct(margem)} agora incide sobre o preço, não sobre o custo</small>`);
+    txt('dt04Res', R$(preco));
+  }
 }
 
 /* ============================================================
@@ -1096,6 +1194,11 @@ function calcular() {
 document.querySelectorAll('#calculadora input').forEach(e => e.addEventListener('input', calcular));
 el('calcMp').addEventListener('change', () => { aplicarMP(); calcular(); });
 el('pixToggle').addEventListener('change', calcular);
+el('methodToggle').addEventListener('change', function() {
+  el('methodLblVenda').classList.toggle('ativo', !this.checked);
+  el('methodLblCusto').classList.toggle('ativo', this.checked);
+  calcular();
+});
 el('btnDetalhar').addEventListener('click', function() {
   const open = this.getAttribute('aria-expanded') === 'true';
   this.setAttribute('aria-expanded', !open);
@@ -1103,6 +1206,7 @@ el('btnDetalhar').addEventListener('click', function() {
 });
 
 // init
+el('methodLblVenda').classList.add('ativo');
 window.scrollTo(0,0);
 aplicarMP();
 calcular();
