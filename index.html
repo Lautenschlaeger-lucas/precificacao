@@ -507,7 +507,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
             <span class="field-label">Preço de custo</span>
             <div class="input-prefix">
               <span class="pfx">R$</span>
-              <input id="custo" type="number" inputmode="decimal" step="0.01" min="0" value="483.07">
+              <input id="custo" type="number" inputmode="decimal" step="0.01" min="0">
             </div>
           </label>
 
@@ -515,14 +515,14 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
             <span class="field-label">Frete pago por nós</span>
             <div class="input-prefix">
               <span class="pfx">R$</span>
-              <input id="frete" type="number" inputmode="decimal" step="0.01" min="0" value="0">
+              <input id="frete" type="number" inputmode="decimal" step="0.01" min="0">
             </div>
           </label>
 
           <label class="field">
             <span class="field-label">Margem de lucro desejada</span>
             <div class="input-suffix">
-              <input id="margem" type="number" inputmode="decimal" step="0.1" min="0" value="30">
+              <input id="margem" type="number" inputmode="decimal" step="0.1" min="0">
               <span class="sfx">%</span>
             </div>
           </label>
@@ -530,7 +530,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           <label class="field">
             <span class="field-label" id="labelComissao">Comissão</span>
             <div class="input-suffix">
-              <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0" value="19">
+              <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0">
               <span class="sfx">%</span>
             </div>
           </label>
@@ -538,7 +538,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           <label class="field">
             <span class="field-label" id="labelAdicPct">Adicional da plataforma</span>
             <div class="input-suffix">
-              <input id="adicionalPct" type="number" inputmode="decimal" step="0.1" min="0" value="8">
+              <input id="adicionalPct" type="number" inputmode="decimal" step="0.1" min="0">
               <span class="sfx">%</span>
             </div>
           </label>
@@ -547,7 +547,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
             <span class="field-label" id="labelAdicRS">Adicional fixo</span>
             <div class="input-prefix">
               <span class="pfx">R$</span>
-              <input id="adicionalRS" type="number" inputmode="decimal" step="0.01" min="0" value="0">
+              <input id="adicionalRS" type="number" inputmode="decimal" step="0.01" min="0">
             </div>
           </label>
         </div>
@@ -933,13 +933,15 @@ function calcular() {
     const { preco, faixa } = result;
 
     // valores derivados
-    const comV    = preco * faixa.com / 100;          // comissão em R$
+    const tarifaVar = faixa.tarifaPct > 0;            // true = tarifa é % do preço
+    // Na faixa 0 (abaixo de R$ 8,00), a taxa de 50% é a comissão + tarifa combinadas
+    const comPct    = tarifaVar ? faixa.tarifaPct : faixa.com;
+    const comV      = preco * comPct / 100;            // comissão em R$
     const margemV = method === 'custo'
       ? custoBase * margem / 100                       // margem fixa sobre o custo
       : preco * margem / 100;                          // margem sobre o preço
-    const tarifaVar = faixa.tarifaPct > 0;            // true = tarifa é % do preço
     const tarifaV = tarifaVar
-      ? preco * faixa.tarifaPct / 100                 // tarifa variável em R$
+      ? 0                                              // faixa 0: taxa já está em comV
       : faixa.tar;                                    // tarifa fixa em R$
     const pixPct  = el('pixToggle').checked ? faixa.pixPct : 0;
     const precoPix = preco * (1 - pixPct/100);
@@ -980,9 +982,11 @@ function calcular() {
     txt('bdComissao', R$(comV));
     txt('bdTarifa',   R$(tarifaV + adicPctV));
     txt('bdMargem',   R$(margemV));
-    txt('bdLabelComissao', `Comissão Shopee (${faixa.com}%)`);
+    txt('bdLabelComissao', tarifaVar
+      ? `Comissão + Tarifa (${faixa.tarifaPct}%)`
+      : `Comissão Shopee (${faixa.com}%)`);
     txt('bdLabelTarifa', tarifaVar
-      ? `Tarifa única faixa ${faixa.id} (${faixa.tarifaPct}%)`
+      ? `Adicional (${adicPct}%)`
       : `Tarifa fixa faixa ${faixa.id}`);
 
     if (temPix) {
@@ -1001,7 +1005,7 @@ function calcular() {
       if (method === 'custo') {
         html('dt01Desc',
           `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
-          `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: tarifa de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, entra no divisor</small>`);
+          `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: comissão de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, entra no divisor</small>`);
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
@@ -1010,22 +1014,22 @@ function calcular() {
         txt('dt02Res', R$(precoBase));
 
         html('dt03Desc',
-          `Divisor = 1 − (${pct(faixa.tarifaPct)} + ${pct(adicPct)}) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Apenas a tarifa única de ${pct(faixa.tarifaPct)} e adicional% no divisor</small>`);
+          `Divisor = 1 − (<strong>${pct(faixa.tarifaPct)}</strong> comissão + ${pct(adicPct)} adicional) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Comissão de ${pct(faixa.tarifaPct)} (tarifa única) + adicional% no divisor</small>`);
         txt('dt03Res', dec3(divisor));
 
         html('dt04Desc',
           `Preço de venda = ${R$(precoBase)} ÷ ${dec3(divisor)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, tarifa sobre o preço</small>`);
+          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, comissão sobre o preço</small>`);
         txt('dt04Res', R$(preco));
       } else {
         html('dt01Desc',
           `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
-          `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: tarifa única de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, vai para o divisor</small>`);
+          `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: comissão de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, vai para o divisor</small>`);
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
-          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (tarifa faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
+          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (comissão faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
           `<small style="color:var(--texto-painel-mudo)">Tudo sobre o preço de venda → soma no divisor</small>`);
         txt('dt02Res', pct(pctDiv));
 
