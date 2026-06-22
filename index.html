@@ -887,6 +887,8 @@ function calcular() {
   const isShopee = mpId === 'shopee';
   const warn    = el('calcWarning');
 
+  limparShopee();
+
   const custo    = val('custo');
   const frete    = val('frete');
   const margem  = val('margem');
@@ -1037,8 +1039,6 @@ function calcular() {
   }
 
   /* ────────── MARKETPLACE SIMPLES ────────── */
-  limparShopee();
-
   const comissao    = val('comissao');
   const adicRS      = val('adicionalRS');
   const somaPct     = margem + comissao + adicPct;
