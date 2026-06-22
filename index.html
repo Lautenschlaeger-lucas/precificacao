@@ -504,7 +504,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           </label>
 
           <label class="field">
-            <span class="field-label">Preço de custo</span>
+            <span class="field-label">Custo do Produto (R$)</span>
             <div class="input-prefix">
               <span class="pfx">R$</span>
               <input id="custo" type="number" inputmode="decimal" step="0.01" min="0">
@@ -512,7 +512,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           </label>
 
           <label class="field">
-            <span class="field-label">Frete pago por nós</span>
+            <span class="field-label">Frete (R$)</span>
             <div class="input-prefix">
               <span class="pfx">R$</span>
               <input id="frete" type="number" inputmode="decimal" step="0.01" min="0">
@@ -520,7 +520,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           </label>
 
           <label class="field">
-            <span class="field-label">Margem de lucro desejada</span>
+            <span class="field-label">Margem de Lucro (%) (Por preço de custo)</span>
             <div class="input-suffix">
               <input id="margem" type="number" inputmode="decimal" step="0.1" min="0">
               <span class="sfx">%</span>
@@ -528,7 +528,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           </label>
 
           <label class="field">
-            <span class="field-label" id="labelComissao">Comissão</span>
+            <span class="field-label" id="labelComissao">Comissão Marketplace (%)</span>
             <div class="input-suffix">
               <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0">
               <span class="sfx">%</span>
@@ -536,18 +536,38 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           </label>
 
           <label class="field">
-            <span class="field-label" id="labelAdicPct">Adicional da plataforma</span>
+            <span class="field-label" id="labelImpostos">Impostos (%)</span>
             <div class="input-suffix">
-              <input id="adicionalPct" type="number" inputmode="decimal" step="0.1" min="0">
+              <input id="impostos" type="number" inputmode="decimal" step="0.1" min="0">
               <span class="sfx">%</span>
             </div>
           </label>
 
           <label class="field">
-            <span class="field-label" id="labelAdicRS">Adicional fixo</span>
+            <span class="field-label">Outras Porcentagens (%)</span>
+            <div class="input-suffix">
+              <input id="outrasPct" type="number" inputmode="decimal" step="0.1" min="0">
+              <span class="sfx">%</span>
+            </div>
+          </label>
+
+          <label class="field" style="margin-top:18px">
+            <span class="field-label" style="font-weight:600;color:var(--texto-painel)">Custos Fixos por Venda</span>
+          </label>
+
+          <label class="field">
+            <span class="field-label" id="labelFixoMp">Fixo Marketplace (R$)</span>
             <div class="input-prefix">
               <span class="pfx">R$</span>
-              <input id="adicionalRS" type="number" inputmode="decimal" step="0.01" min="0">
+              <input id="fixoMp" type="number" inputmode="decimal" step="0.01" min="0">
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Operacional (R$)</span>
+            <div class="input-prefix">
+              <span class="pfx">R$</span>
+              <input id="operacional" type="number" inputmode="decimal" step="0.01" min="0">
             </div>
           </label>
         </div>
@@ -580,7 +600,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
             <div class="passo-calculo">
               <span class="passo-num-dt">01</span>
               <div>
-                <p id="dt01Desc">Custo base = custo + frete</p>
+                <p id="dt01Desc">Custo base = custo + frete + fixo MP + operacional</p>
                 <p class="passo-resultado" id="dt01Res">R$ 0,00</p>
               </div>
             </div>
@@ -589,7 +609,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
             <div class="passo-calculo">
               <span class="passo-num-dt">02</span>
               <div>
-                <p id="dt02Desc">Soma dos percentuais = margem + comissão + adicional%</p>
+                <p id="dt02Desc">Soma dos percentuais = margem + comissão + impostos + outras%</p>
                 <p class="passo-resultado" id="dt02Res">0,0%</p>
               </div>
             </div>
@@ -747,28 +767,28 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
    CONFIG MARKETPLACES
    ============================================================ */
 const MP = {
-  mlclassico:    { comissao:14, adicPct:8,  adicRS:0,  labelCom:'Comissão ML Clássico',       labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  mlpremium:     { comissao:19, adicPct:8,  adicRS:0,  labelCom:'Comissão ML Premium',        labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  amazon:        { comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Amazon',            labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  magalu:        { comissao:16, adicPct:0,  adicRS:0,  labelCom:'Comissão Magalu',            labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  aliexpress:    { comissao:8,  adicPct:0,  adicRS:0,  labelCom:'Comissão AliExpress',        labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  americanas:    { comissao:19, adicPct:0,  adicRS:0,  labelCom:'Comissão Americanas',        labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  carrefour:     { comissao:16, adicPct:0,  adicRS:0,  labelCom:'Comissão Carrefour',         labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  casasbahia:    { comissao:21, adicPct:0,  adicRS:0,  labelCom:'Comissão Casas Bahia',       labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  kabum:         { comissao:14, adicPct:0,  adicRS:0,  labelCom:'Comissão KaBuM!',            labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  leroymerlin:   { comissao:18, adicPct:0,  adicRS:0,  labelCom:'Comissão Leroy Merlin',      labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  colombo:       { comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Lojas Colombo',     labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  madeiramadeira:{ comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Madeira-Madeira',   labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  netshoes:      { comissao:20, adicPct:0,  adicRS:0,  labelCom:'Comissão Netshoes',          labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  olist:         { comissao:21, adicPct:0,  adicRS:0,  labelCom:'Comissão Olist',             labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  shein:         { comissao:16, adicPct:0,  adicRS:0,  labelCom:'Comissão Shein',             labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  shopify:       { comissao:2,  adicPct:0,  adicRS:0,  labelCom:'Comissão Shopify',           labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  tiktok:        { comissao:12, adicPct:0,  adicRS:0,  labelCom:'Comissão TikTok Shop',       labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
-  wish:          { comissao:5,  adicPct:0,  adicRS:0,  labelCom:'Comissão Wish',              labelPct:'Adicional da plataforma', labelRS:'Adicional fixo' },
+  mlclassico:    { comissao:14, impostos:8, fixoMp:0, labelCom:'Comissão ML Clássico',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  mlpremium:     { comissao:19, impostos:8, fixoMp:0, labelCom:'Comissão ML Premium',        labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  amazon:        { comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Amazon',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  magalu:        { comissao:16, impostos:0, fixoMp:0, labelCom:'Comissão Magalu',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  aliexpress:    { comissao:8,  impostos:0, fixoMp:0, labelCom:'Comissão AliExpress',        labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  americanas:    { comissao:19, impostos:0, fixoMp:0, labelCom:'Comissão Americanas',        labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  carrefour:     { comissao:16, impostos:0, fixoMp:0, labelCom:'Comissão Carrefour',         labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  casasbahia:    { comissao:21, impostos:0, fixoMp:0, labelCom:'Comissão Casas Bahia',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  kabum:         { comissao:14, impostos:0, fixoMp:0, labelCom:'Comissão KaBuM!',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  leroymerlin:   { comissao:18, impostos:0, fixoMp:0, labelCom:'Comissão Leroy Merlin',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  colombo:       { comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Lojas Colombo',     labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  madeiramadeira:{ comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Madeira-Madeira',   labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  netshoes:      { comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Netshoes',          labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  olist:         { comissao:21, impostos:0, fixoMp:0, labelCom:'Comissão Olist',             labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  shein:         { comissao:16, impostos:0, fixoMp:0, labelCom:'Comissão Shein',             labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  shopify:       { comissao:2,  impostos:0, fixoMp:0, labelCom:'Comissão Shopify',           labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  tiktok:        { comissao:12, impostos:0, fixoMp:0, labelCom:'Comissão TikTok Shop',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  wish:          { comissao:5,  impostos:0, fixoMp:0, labelCom:'Comissão Wish',              labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
   shopee: {
     labelCom: 'Comissão (definida pela faixa)',
-    labelPct: 'Adicional %',
-    labelRS:  'Tarifa fixa (definida pela faixa)',
+    labelImpostos: 'Impostos (%)',
+    labelFixoMp:  'Fixo Marketplace (R$)',
     tipo: 'faixas',
     /*
       Faixas conforme tabela oficial (imagem):
@@ -871,17 +891,17 @@ function aplicarMP() {
   const isShopee = mpId === 'shopee';
 
   txt('labelComissao', cfg.labelCom);
-  txt('labelAdicPct',  cfg.labelPct);
-  txt('labelAdicRS',   cfg.labelRS);
+  txt('labelImpostos', cfg.labelImpostos);
+  txt('labelFixoMp',   cfg.labelFixoMp);
 
   if (!isShopee) {
-    el('comissao').value    = cfg.comissao;
-    el('adicionalPct').value = cfg.adicPct;
-    el('adicionalRS').value  = cfg.adicRS;
+    el('comissao').value   = cfg.comissao;
+    el('impostos').value   = cfg.impostos;
+    el('fixoMp').value     = cfg.fixoMp;
   }
 
-  el('comissao').disabled    = isShopee;
-  el('adicionalRS').disabled  = isShopee;
+  el('comissao').disabled  = isShopee;
+  el('fixoMp').disabled    = isShopee;
 
   el('pixToggleWrap').classList.toggle('ativo', isShopee);
 }
@@ -910,15 +930,17 @@ function calcular() {
   const custo    = val('custo');
   const frete    = val('frete');
   const margem  = val('margem');
-  const adicPct = val('adicionalPct');
+  const impostos = val('impostos');
+  const outrasPct = val('outrasPct');
+  const operacional = val('operacional');
 
   /* ────────── SHOPEE ────────── */
   if (isShopee) {
-    const custoBase = custo + frete;
+    const custoBase = custo + frete + operacional;
     const method    = el('methodToggle').checked ? 'custo' : 'venda';
     const margemEff = method === 'custo' ? 0 : margem;
     const precoBase = method === 'custo' ? custoBase * (1 + margem/100) : custoBase;
-    const result    = shopeeCalc(precoBase, margemEff, adicPct);
+    const result    = shopeeCalc(precoBase, margemEff, impostos + outrasPct);
 
     if (!result || !isFinite(result.preco) || result.preco <= 0) {
       warn.hidden = false;
@@ -974,19 +996,20 @@ function calcular() {
       el('badgePix').classList.remove('ativo');
     }
 
-    // valores adicionais em R$
-    const adicPctV = preco * adicPct / 100;
+    // valores em R$
+    const impostosV = preco * impostos / 100;
+    const outrasV   = preco * outrasPct / 100;
 
     // ── breakdown
     txt('bdCusto',    R$(custoBase));
     txt('bdComissao', R$(comV));
-    txt('bdTarifa',   R$(tarifaV + adicPctV));
+    txt('bdTarifa',   R$(tarifaV + impostosV + outrasV));
     txt('bdMargem',   R$(margemV));
     txt('bdLabelComissao', tarifaVar
       ? `Comissão + Tarifa (${faixa.tarifaPct}%)`
       : `Comissão Shopee (${faixa.com}%)`);
     txt('bdLabelTarifa', tarifaVar
-      ? `Adicional (${adicPct}%)`
+      ? `Impostos + Outras (${impostos}% + ${outrasPct}%)`
       : `Tarifa fixa faixa ${faixa.id}`);
 
     if (temPix) {
@@ -997,14 +1020,15 @@ function calcular() {
     }
 
     // ── detalhamento passo a passo
+    const somaPct = margemEff + faixa.com + faixa.tarifaPct + impostos + outrasPct;
     if (tarifaVar) {
       // ── FAIXA 0: tarifa % entra no divisor
-      const pctDiv = margemEff + faixa.com + faixa.tarifaPct + adicPct;
+      const pctDiv = margemEff + faixa.com + faixa.tarifaPct + impostos + outrasPct;
       const divisor = 1 - pctDiv/100;
 
       if (method === 'custo') {
         html('dt01Desc',
-          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
           `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: comissão de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, entra no divisor</small>`);
         txt('dt01Res', R$(custoBase));
 
@@ -1014,8 +1038,8 @@ function calcular() {
         txt('dt02Res', R$(precoBase));
 
         html('dt03Desc',
-          `Divisor = 1 − (<strong>${pct(faixa.tarifaPct)}</strong> comissão + ${pct(adicPct)} adicional) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Comissão de ${pct(faixa.tarifaPct)} (tarifa única) + adicional% no divisor</small>`);
+          `Divisor = 1 − (<strong>${pct(faixa.tarifaPct)}</strong> comissão + ${pct(impostos)} impostos + ${pct(outrasPct)} outras) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Comissão de ${pct(faixa.tarifaPct)} + impostos + outras% no divisor</small>`);
         txt('dt03Res', dec3(divisor));
 
         html('dt04Desc',
@@ -1024,12 +1048,12 @@ function calcular() {
         txt('dt04Res', R$(preco));
       } else {
         html('dt01Desc',
-          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
           `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: comissão de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, vai para o divisor</small>`);
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
-          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (comissão faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
+          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (comissão faixa ${faixa.id})${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras %)` : ''}<br>`+
           `<small style="color:var(--texto-painel-mudo)">Tudo sobre o preço de venda → soma no divisor</small>`);
         txt('dt02Res', pct(pctDiv));
 
@@ -1044,14 +1068,14 @@ function calcular() {
 
     } else {
       // ── FAIXAS 1–5: tarifa fixa no numerador
-      const pctDiv = margemEff + faixa.com + adicPct;
+      const pctDiv = margemEff + faixa.com + impostos + outrasPct;
       const divisor = 1 - pctDiv/100;
       const custoComTarifa = custoBase + faixa.tar;
 
       if (method === 'custo') {
         const totalComMargem = precoBase + faixa.tar;
         html('dt01Desc',
-          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete)<br>`+
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
           `<small style="color:var(--texto-painel-mudo)">Tarifa fixa de <strong>${R$(faixa.tar)}</strong> ainda não entra — vai somar depois da margem</small>`);
         txt('dt01Res', R$(custoBase));
 
@@ -1062,24 +1086,24 @@ function calcular() {
         txt('dt02Res', R$(totalComMargem));
 
         html('dt03Desc',
-          `Divisor = 1 − (${pct(faixa.com)} + ${pct(adicPct)}) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Apenas comissão e adicional% no divisor — margem já está no numerador</small>`);
+          `Divisor = 1 − (${pct(faixa.com)} comissão${impostos ? ` + ${pct(impostos)} impostos` : ''}${outrasPct ? ` + ${pct(outrasPct)} outras` : ''}) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Apenas % no divisor — margem já está no numerador</small>`);
         txt('dt03Res', dec3(divisor));
 
         html('dt04Desc',
           `Preço de venda = ${R$(totalComMargem)} ÷ ${dec3(divisor)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, comissão e taxas sobre o preço</small>`);
+          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, taxas sobre o preço</small>`);
         txt('dt04Res', R$(preco));
 
       } else {
         const ctBase = custoBase + faixa.tar;
         html('dt01Desc',
-          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(faixa.tar)}</strong> (tarifa fixa faixa ${faixa.id})<br>`+
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional) + <strong>${R$(faixa.tar)}</strong> (tarifa fixa faixa ${faixa.id})<br>`+
           `<small style="color:var(--texto-painel-mudo)">Tarifa fixa não varia com o preço → entra no numerador como custo</small>`);
         txt('dt01Res', R$(ctBase));
 
         html('dt02Desc',
-          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})${adicPct ? ` + <strong>${pct(adicPct)}</strong> (adicional %)` : ''}<br>`+
+          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras %)` : ''}<br>`+
           `<small style="color:var(--texto-painel-mudo)">Todos sobre o preço de venda → somam no divisor</small>`);
         txt('dt02Res', pct(pctDiv));
 
@@ -1112,18 +1136,18 @@ function calcular() {
   }
 
   /* ────────── MARKETPLACE SIMPLES ────────── */
-  const comissao    = val('comissao');
-  const adicRS      = val('adicionalRS');
-  const custoTotal  = custo + frete + adicRS;
-  const method      = el('methodToggle').checked ? 'custo' : 'venda';
+  const comissao     = val('comissao');
+  const fixoMp       = val('fixoMp');
+  const custoTotal   = custo + frete + fixoMp + operacional;
+  const method       = el('methodToggle').checked ? 'custo' : 'venda';
 
   // valida
-  const validPct = method === 'custo' ? comissao + adicPct : margem + comissao + adicPct;
+  const validPct = method === 'custo' ? comissao + impostos + outrasPct : margem + comissao + impostos + outrasPct;
   if (validPct >= 100) {
     warn.hidden = false;
     warn.textContent = method === 'custo'
-      ? `Comissão + adicional somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`
-      : `Margem + comissão + adicional somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`;
+      ? `Comissão + impostos + outros somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`
+      : `Margem + comissão + impostos + outros somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`;
     txt('precoFinal', '—');
     ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
     txt('dt01Res','—'); txt('dt02Res','—'); txt('dt03Res','—'); txt('dt04Res','—');
@@ -1132,7 +1156,7 @@ function calcular() {
 
   warn.hidden = true;
 
-  const pctNoDivisor = method === 'custo' ? comissao + adicPct : margem + comissao + adicPct;
+  const pctNoDivisor = method === 'custo' ? comissao + impostos + outrasPct : margem + comissao + impostos + outrasPct;
   const divisor      = 1 - pctNoDivisor / 100;
   const precoBase    = method === 'custo' ? custoTotal * (1 + margem/100) : null;
   const preco        = method === 'custo' ? precoBase / divisor : custoTotal / divisor;
@@ -1142,15 +1166,15 @@ function calcular() {
 
   txt('bdCusto',    R$(custoTotal));
   txt('bdComissao', R$(preco * comissao/100));
-  txt('bdTarifa',   R$(preco * adicPct/100 + adicRS));
+  txt('bdTarifa',   R$(preco * (impostos + outrasPct)/100 + fixoMp));
   txt('bdMargem',   method === 'custo' ? R$(custoTotal * margem/100) : R$(preco * margem/100));
   txt('bdLabelComissao', 'Comissão');
-  txt('bdLabelTarifa',   'Adicional');
+  txt('bdLabelTarifa',   'Impostos + Outras + Fixo');
 
   // detalhamento
   if (method === 'custo') {
     html('dt01Desc',
-      `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(adicRS)}</strong> (adicional fixo)<br>`+
+      `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(fixoMp)}</strong> (fixo MP) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
       `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base</small>`);
     txt('dt01Res', R$(custoTotal));
 
@@ -1160,8 +1184,8 @@ function calcular() {
     txt('dt02Res', R$(precoBase));
 
     html('dt03Desc',
-      `Divisor = 1 − (${pct(comissao)} + ${pct(adicPct)}) ÷ 100 = 1 − ${dec3(pctNoDivisor/100)}<br>`+
-      `<small style="color:var(--texto-painel-mudo)">Apenas comissão e adicional% no divisor — margem já embutida no preço base</small>`);
+      `Divisor = 1 − (${pct(comissao)} comissão${impostos ? ` + ${pct(impostos)} impostos` : ''}${outrasPct ? ` + ${pct(outrasPct)} outras` : ''}) ÷ 100 = 1 − ${dec3(pctNoDivisor/100)}<br>`+
+      `<small style="color:var(--texto-painel-mudo)">Apenas % no divisor — margem já embutida no preço base</small>`);
     txt('dt03Res', dec3(divisor));
 
     html('dt04Desc',
@@ -1171,12 +1195,12 @@ function calcular() {
 
   } else {
     html('dt01Desc',
-      `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(adicRS)}</strong> (adicional fixo em R$)<br>`+
+      `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(fixoMp)}</strong> (fixo MP) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
       `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base — não variam com o preço de venda</small>`);
     txt('dt01Res', R$(custoTotal));
 
     html('dt02Desc',
-      `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem desejada) + <strong>${pct(comissao)}</strong> (comissão) + <strong>${pct(adicPct)}</strong> (adicional %)<br>`+
+      `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(comissao)}</strong> (comissão)${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras %)` : ''}<br>`+
       `<small style="color:var(--texto-painel-mudo)">Todos incidem sobre o preço de venda → somam juntos no divisor</small>`);
     txt('dt02Res', pct(pctNoDivisor));
 
