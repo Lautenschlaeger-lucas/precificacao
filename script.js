@@ -1,6 +1,3 @@
-/* ============================================================
-   CONFIG MARKETPLACES
-   ============================================================ */
 const MP = {
   mlclassico:    { comissao:14, impostos:0,  fixoMp:0, labelCom:'Comissão ML Clássico',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
   mlpremium:     { comissao:19, impostos:0,  fixoMp:0, labelCom:'Comissão ML Premium',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
@@ -36,9 +33,6 @@ const MP = {
   }
 };
 
-/* ============================================================
-   HELPERS
-   ============================================================ */
 const R$   = n => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(n);
 const pct  = n => n.toFixed(1).replace('.', ',') + '%';
 const dec3 = n => n.toFixed(3).replace('.', ',');
@@ -54,9 +48,6 @@ const bdShow = (liId, labelId, labelTxt, valId, valor) => {
 };
 const bdHide = liId => el(liId).classList.remove('ativo');
 
-/* ============================================================
-   SHOPEE
-   ============================================================ */
 function shopeeFaixa(preco) {
   const f = MP.shopee.faixas;
   return f.find(x => preco >= x.min && preco <= x.max) || f[f.length - 1];
@@ -98,9 +89,6 @@ function shopeeCalc(custoBase, margemPct, adicPct) {
   return { preco, faixa: f };
 }
 
-/* ============================================================
-   APLICAR CONFIG DO MARKETPLACE
-   ============================================================ */
 function aplicarMP() {
   const mpId    = el('calcMp').value;
   const cfg     = MP[mpId];
@@ -120,9 +108,6 @@ function aplicarMP() {
   el('pixToggleWrap').classList.toggle('ativo', isShopee);
 }
 
-/* ============================================================
-   LIMPAR ELEMENTOS SHOPEE
-   ============================================================ */
 function limparShopee() {
   el('badgeTier').classList.remove('ativo');
   el('badgePix').classList.remove('ativo');
@@ -131,9 +116,6 @@ function limparShopee() {
   el('dt05Pix').classList.remove('ativo');
 }
 
-/* ============================================================
-   CALCULAR
-   ============================================================ */
 function calcular() {
   const mpId     = el('calcMp').value;
   const isShopee = mpId === 'shopee';
@@ -149,9 +131,6 @@ function calcular() {
   const outrasPct   = val('outrasPct');
   const operacional = val('operacional');
 
-  /* ══════════════════════════════════════════════
-     SHOPEE
-     ══════════════════════════════════════════════ */
   if (isShopee) {
     const custoBase = custo + frete + operacional;
 
@@ -344,9 +323,6 @@ function calcular() {
     return;
   }
 
-  /* ══════════════════════════════════════════════
-     MARKETPLACE SIMPLES
-     ══════════════════════════════════════════════ */
   const comissao   = val('comissao');
   const fixoMp     = val('fixoMp');
   const custoTotal = custo + frete + fixoMp + operacional;
@@ -448,9 +424,6 @@ function calcular() {
   }
 }
 
-/* ============================================================
-   LISTENERS
-   ============================================================ */
 document.querySelectorAll('#calculadora input').forEach(e => e.addEventListener('input', calcular));
 el('calcMp').addEventListener('change', () => { aplicarMP(); calcular(); });
 el('pixToggle').addEventListener('change', calcular);

@@ -30,7 +30,6 @@
 
 <main>
 
-  <!-- ============ CALCULADORA ============ -->
   <section id="calculadora" class="painel">
     <div class="painel-grid-bg" aria-hidden="true"></div>
     <div class="hero-inner">
@@ -39,7 +38,6 @@
       <p class="lede">Informe custo e taxas. O preço de venda sai na hora.</p>
 
       <div class="calc-card">
-        <!-- ===== INPUTS ===== -->
         <div class="calc-inputs">
           <p class="card-kicker field-full">Dados de entrada</p>
 
@@ -68,7 +66,6 @@
             </select>
           </label>
 
-          <!-- toggle: método de precificação -->
           <div class="field field-full" id="methodToggleWrap">
             <span class="field-label">Método de precificação</span>
             <div class="method-row">
@@ -81,19 +78,16 @@
             </div>
           </div>
 
-          <!-- badge: faixa shopee -->
           <div class="badge badge-tier field-full" id="badgeTier">
             <span class="tag" id="badgeTierTag"></span>
             <span id="badgeTierInfo"></span>
           </div>
 
-          <!-- badge: subsídio pix shopee -->
           <div class="badge badge-pix field-full" id="badgePix">
             <span class="tag">Subsídio Pix</span>
             <span id="badgePixInfo"></span>
           </div>
 
-          <!-- toggle: subsidio pix (visivel apenas no shopee) -->
           <label class="toggle-field field-full" id="pixToggleWrap">
             <span class="field-label">Subsídio Pix</span>
             <div class="toggle-row">
@@ -174,7 +168,6 @@
           </label>
         </div>
 
-        <!-- ===== OUTPUT ===== -->
         <div class="calc-output">
           <p class="card-kicker">Resultado</p>
 
@@ -183,7 +176,6 @@
             <span class="preco-value" id="precoFinal">R$ 0,00</span>
           </div>
 
-          <!-- bloco pix (shopee) -->
           <div class="preco-pix-bloco" id="precoPix">
             <span class="preco-pix-label">Com pagamento via Pix</span>
             <div class="preco-pix-value" id="precoPixVal">R$ 0,00</div>
@@ -230,7 +222,6 @@
               </div>
             </div>
 
-            <!-- passo pix — só shopee -->
             <div class="passo-calculo passo-pix" id="dt05Pix">
               <span class="passo-num-dt">05</span>
               <div>
@@ -240,11 +231,10 @@
               </div>
             </div>
 
-          </div><!-- /detalhe -->
+          </div>
 
           <p class="warning" id="calcWarning" hidden></p>
 
-          <!-- BREAKDOWN — cada linha tem swatch + label + valor -->
           <ul class="breakdown">
             <li>
               <span class="swatch s-custo"></span>
@@ -256,37 +246,32 @@
               <span id="bdLabelComissao">Comissão</span>
               <span id="bdComissao">R$ 0,00</span>
             </li>
-            <!-- tarifa fixa: só visível quando aplicável (shopee faixas 1-5 ou mp simples com fixoMp) -->
             <li class="li-tarifa-fixa" id="liTarifaFixa">
               <span class="swatch s-tarifa"></span>
               <span id="bdLabelTarifaFixa">Tarifa fixa</span>
               <span id="bdTarifaFixa">R$ 0,00</span>
             </li>
-            <!-- impostos + outras % -->
             <li class="li-impostos" id="liImpostos">
               <span class="swatch s-impostos"></span>
               <span id="bdLabelImpostos">Impostos + Outras %</span>
               <span id="bdImpostos">R$ 0,00</span>
             </li>
-            <!-- desconto pix shopee -->
             <li class="li-pix" id="liPix">
               <span class="swatch s-pix"></span>
               Desconto Pix (absorvido)
               <span id="bdPix">− R$ 0,00</span>
             </li>
-            <!-- margem — sempre último (negrito via CSS last-child) -->
             <li>
               <span class="swatch s-margem"></span>
               Margem (lucro)
               <span id="bdMargem">R$ 0,00</span>
             </li>
           </ul>
-        </div><!-- /output -->
-      </div><!-- /card -->
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ============ FICHA TÉCNICA ============ -->
   <section id="como-funciona" class="manual">
     <div class="manual-inner">
       <p class="eyebrow eyebrow-dark">FICHA TÉCNICA</p>
