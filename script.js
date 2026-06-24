@@ -422,10 +422,6 @@ function calcular() {
       `<small style="color:var(--texto-painel-mudo)">Resultado: a margem de ${pct(margem)} agora incide sobre o preço, não sobre o custo</small>`);
     txt('dt04Res', R$(preco));
   }
-  const pe = el('precoFinal');
-  pe.classList.remove('pop');
-  void pe.offsetWidth;
-  pe.classList.add('pop');
 }
 
 document.querySelectorAll('#calculadora input').forEach(e => e.addEventListener('input', calcular));
@@ -442,16 +438,8 @@ el('methodToggle').addEventListener('change', function () {
 });
 el('btnDetalhar').addEventListener('click', function () {
   const open = this.getAttribute('aria-expanded') === 'true';
-  const detalhe = el('detalheCalculo');
-  if (!open) {
-    detalhe.classList.add('aberto');
-    detalhe.style.maxHeight = detalhe.scrollHeight + 'px';
-    this.setAttribute('aria-expanded', 'true');
-  } else {
-    detalhe.style.maxHeight = '0px';
-    detalhe.classList.remove('aberto');
-    this.setAttribute('aria-expanded', 'false');
-  }
+  this.setAttribute('aria-expanded', String(!open));
+  el('detalheCalculo').classList.toggle('aberto', !open);
 });
 
 el('methodLblVenda').classList.add('ativo');
