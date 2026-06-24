@@ -985,11 +985,12 @@ function calcular() {
   if (isShopee) {
     const custoBase = custo + frete + operacional;
 
-    // No método "custo": margem sobre o custo já está embutida no precoBase,
-    // o divisor só carrega comissão + impostos + outras
-    const margemEff  = method === 'custo' ? 0 : margem;
-    const precoBase  = method === 'custo' ? custoBase * (1 + margem / 100) : custoBase;
-    const result     = shopeeCalc(precoBase, margemEff, impostos + outrasPct);
+    // No método "custo": margem aplicada SOMENTE sobre o custo do produto,
+    // frete e operacional entram como custo fixo (sem margem em cima)
+    const margemLucro = method === 'custo' ? custo * margem / 100 : null;
+    const margemEff   = method === 'custo' ? 0 : margem;
+    const precoBase   = method === 'custo' ? custoBase + margemLucro : custoBase;
+    const result      = shopeeCalc(precoBase, margemEff, impostos + outrasPct);
 
     if (!result || !isFinite(result.preco) || result.preco <= 0) {
       warn.hidden = false;
@@ -1024,11 +1025,9 @@ function calcular() {
     const descPix  = preco - precoPixV;
     const temPix   = pixPct > 0;
 
-    // Margem em R$ — o que sobra depois de deduzir tudo do preço final
-    // Para "venda": margem% sobre o preço
-    // Para "custo": margem% sobre o custo (definição que o usuário controla)
+    // Margem em R$ — aplicada SOMENTE sobre o custo do produto no método "custo"
     const margemV = method === 'custo'
-      ? custoBase * margem / 100
+      ? margemLucro
       : preco * margem / 100;
 
     /* ── preço principal ───────────────────────── */
@@ -1102,8 +1101,9 @@ function calcular() {
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
-          `Preço base (c/ margem s/ custo) = ${R$(custoBase)} × (1 + ${pct(margem)}) = <strong>${R$(precoBase)}</strong><br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada sobre o custo antes do divisor</small>`);
+          `Margem s/ produto = ${R$(custo)} × ${pct(margem)} = <strong>${R$(margemLucro)}</strong><br>`+
+          `Preço base = ${R$(custoBase)} + ${R$(margemLucro)} = <strong>${R$(precoBase)}</strong><br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada <strong>apenas sobre o custo do produto</strong>, frete/operacional sem margem</small>`);
         txt('dt02Res', R$(precoBase));
 
         html('dt03Desc',
@@ -1145,9 +1145,10 @@ function calcular() {
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
-          `Preço base = ${R$(custoBase)} × (1 + ${pct(margem)}) = ${R$(precoBase)}<br>`+
+          `Margem s/ produto = ${R$(custo)} × ${pct(margem)} = <strong>${R$(margemLucro)}</strong><br>`+
+          `Preço base = ${R$(custoBase)} + ${R$(margemLucro)} = <strong>${R$(precoBase)}</strong><br>`+
           `+ tarifa fixa Faixa ${faixa.id} = ${R$(precoBase)} + ${R$(faixa.tar)} = <strong>${R$(totalComMargem)}</strong><br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} sobre o custo, depois tarifa fixa somada</small>`);
+          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} apenas sobre o custo do produto</small>`);
         txt('dt02Res', R$(totalComMargem));
 
         html('dt03Desc',
@@ -1218,15 +1219,16 @@ function calcular() {
 
   warn.hidden = true;
 
-  const divisor   = 1 - pctNoDivisor / 100;
-  const precoBase = method === 'custo' ? custoTotal * (1 + margem / 100) : null;
-  const preco     = method === 'custo' ? precoBase / divisor : custoTotal / divisor;
+  // Margem aplicada SOMENTE sobre o custo do produto no método "custo"
+  const margemLucro = method === 'custo' ? custo * margem / 100 : null;
+  const precoBase   = method === 'custo' ? custoTotal + margemLucro : null;
+  const preco       = method === 'custo' ? precoBase / divisor : custoTotal / divisor;
 
   /* ── valores em R$ ─────────────────────────── */
-  const comV          = preco * comissao / 100;
+  const comV            = preco * comissao / 100;
   const impostosOutrasV = preco * (impostos + outrasPct) / 100;
-  const margemV       = method === 'custo'
-    ? custoTotal * margem / 100
+  const margemV         = method === 'custo'
+    ? margemLucro
     : preco * margem / 100;
 
   /* ── preço ─────────────────────────────────── */
@@ -1260,12 +1262,13 @@ function calcular() {
   if (method === 'custo') {
     html('dt01Desc',
       `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(fixoMp)}</strong> (fixo MP) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
-      `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base</small>`);
+      `<small style="color:var(--texto-painel-mudo)">Valores fixos somam na base — margem incide apenas sobre o custo do produto</small>`);
     txt('dt01Res', R$(custoTotal));
 
     html('dt02Desc',
-      `Preço base = ${R$(custoTotal)} × (1 + ${pct(margem)}) = ${R$(custoTotal)} × ${dec3(1 + margem / 100)}<br>`+
-      `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada <strong>sobre o custo</strong></small>`);
+      `Margem s/ produto = ${R$(custo)} × ${pct(margem)} = <strong>${R$(margemLucro)}</strong><br>`+
+      `Preço base = ${R$(custoTotal)} + ${R$(margemLucro)} = <strong>${R$(precoBase)}</strong><br>`+
+      `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada <strong>apenas sobre o custo do produto</strong></small>`);
     txt('dt02Res', R$(precoBase));
 
     html('dt03Desc',
@@ -1275,7 +1278,7 @@ function calcular() {
 
     html('dt04Desc',
       `Preço de venda = ${R$(precoBase)} ÷ ${dec3(divisor)}<br>`+
-      `<small style="color:var(--texto-painel-mudo)">Resultado: ${pct(margem)} de margem sobre o custo, taxas sobre o preço final</small>`);
+      `<small style="color:var(--texto-painel-mudo)">Resultado: ${pct(margem)} de margem sobre o custo do produto, taxas sobre o preço final</small>`);
     txt('dt04Res', R$(preco));
 
   } else {
