@@ -1219,6 +1219,8 @@ function calcular() {
 
   warn.hidden = true;
 
+  const divisor   = 1 - pctNoDivisor / 100;
+
   // Margem aplicada SOMENTE sobre o custo do produto no método "custo"
   const margemLucro = method === 'custo' ? custo * margem / 100 : null;
   const precoBase   = method === 'custo' ? custoTotal + margemLucro : null;
@@ -1235,7 +1237,7 @@ function calcular() {
   txt('precoFinal', R$(preco));
 
   /* ── breakdown ─────────────────────────────── */
-  txt('bdCusto',        R$(custoTotal));
+    txt('bdCusto',    R$(custoTotal));
   txt('bdLabelComissao', `Comissão (${pct(comissao)})`);
   txt('bdComissao',     R$(comV));
 
