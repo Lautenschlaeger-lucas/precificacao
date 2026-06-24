@@ -458,10 +458,3 @@ el('methodLblVenda').classList.add('ativo');
 window.scrollTo(0, 0);
 aplicarMP();
 calcular();
-
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('reveal'); observer.unobserve(e.target); } });
-  }, { threshold: .1, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.passo-item').forEach(el => observer.observe(el));
-}

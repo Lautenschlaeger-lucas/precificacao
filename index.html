@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel de Preços — Calculadora de Precificação para Marketplaces</title>
-<meta name="description" content="Calculadora profissional de markup divisor para marketplaces. Calcule preço de venda com margem, comissão, impostos e taxas em segundos.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230B0F1A' stroke='%2306B6D4' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%2306B6D4'/%3E%3C/svg%3E">
+<title>Calculadora de Preços — Uso Implantação</title>
+<meta name="description" content="Calculadora interna de precificação por markup divisor — custo, margem, comissão e taxas em uma conta só.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231A1D1F'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23FF6A1A' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%233E6E8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,12 +16,10 @@
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="#calculadora">
-      <span class="brand-icon" aria-hidden="true">
-        <span class="brand-icon-ring"></span>
-        <span class="brand-icon-dot"></span>
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/></svg>
       </span>
-      <span class="brand-text">Painel<span>Preços</span></span>
-      <span class="brand-badge">interno</span>
+      <span class="brand-text">Painel de Preços <em>· interno</em></span>
     </a>
     <nav class="topnav">
       <a href="#calculadora">Calculadora</a>
@@ -32,370 +30,349 @@
 
 <main>
 
-<section id="calculadora" class="hero">
-  <div class="hero-bg" aria-hidden="true"></div>
-  <div class="hero-grid" aria-hidden="true"></div>
-  <div class="hero-glow" aria-hidden="true"></div>
-  <div class="hero-inner">
-    <div class="hero-header">
-      <p class="hero-eyebrow"><span class="hero-eyebrow-line"></span> Precificação markup divisor</p>
-      <h1>Preço certo para vender em marketplaces</h1>
-      <p class="hero-sub">Custo, margem, comissão e taxas em uma conta só. Resultado instantâneo com breakdown detalhado.</p>
-    </div>
+  <section id="calculadora" class="painel">
+    <div class="painel-grid-bg" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="eyebrow">CALCULAR PREÇO</p>
+      <h1>Calcular</h1>
+      <p class="lede">Informe custo e taxas. O preço de venda sai na hora.</p>
 
-    <div class="calc-card">
-      <div class="calc-inputs">
-        <p class="card-kicker field-full">Dados de entrada</p>
+      <div class="calc-card">
+        <div class="calc-inputs">
+          <p class="card-kicker field-full">Dados de entrada</p>
 
-        <label class="field field-full">
-          <span class="field-label">Marketplace</span>
-          <select class="mp-select" id="calcMp" autocomplete="off">
-            <option value="mlclassico">Mercado Livre (Clássico)</option>
-            <option value="mlpremium">Mercado Livre (Premium)</option>
-            <option value="shopee">Shopee</option>
-            <option value="amazon">Amazon</option>
-            <option value="magalu">Magazine Luiza</option>
-            <option value="aliexpress">AliExpress</option>
-            <option value="americanas">Americanas</option>
-            <option value="carrefour">Carrefour</option>
-            <option value="casasbahia">Casas Bahia</option>
-            <option value="kabum">KaBuM!</option>
-            <option value="leroymerlin">Leroy Merlin</option>
-            <option value="colombo">Lojas Colombo</option>
-            <option value="madeiramadeira">Madeira-Madeira</option>
-            <option value="netshoes">Netshoes</option>
-            <option value="olist">Olist</option>
-            <option value="shein">Shein</option>
-            <option value="shopify">Shopify</option>
-            <option value="tiktok">TikTok Shop</option>
-            <option value="wish">Wish</option>
-          </select>
-        </label>
+          <label class="field field-full">
+            <span class="field-label">Marketplace</span>
+            <select class="mp-select" id="calcMp" autocomplete="off">
+              <option value="mlclassico">Mercado Livre (Clássico)</option>
+              <option value="mlpremium">Mercado Livre (Premium)</option>
+              <option value="shopee">Shopee</option>
+              <option value="amazon">Amazon</option>
+              <option value="magalu">Magazine Luiza</option>
+              <option value="aliexpress">AliExpress</option>
+              <option value="americanas">Americanas</option>
+              <option value="carrefour">Carrefour</option>
+              <option value="casasbahia">Casas Bahia</option>
+              <option value="kabum">KaBuM!</option>
+              <option value="leroymerlin">Leroy Merlin</option>
+              <option value="colombo">Lojas Colombo</option>
+              <option value="madeiramadeira">Madeira-Madeira</option>
+              <option value="netshoes">Netshoes</option>
+              <option value="olist">Olist</option>
+              <option value="shein">Shein</option>
+              <option value="shopify">Shopify</option>
+              <option value="tiktok">TikTok Shop</option>
+              <option value="wish">Wish</option>
+            </select>
+          </label>
 
-        <div class="field field-full" id="methodToggleWrap">
-          <span class="field-label">Método de precificação</span>
-          <div class="method-row">
-            <span class="method-lbl" id="methodLblVenda">Por preço de venda</span>
-            <label class="switch">
-              <input type="checkbox" id="methodToggle">
-              <span class="switch-slider"></span>
-            </label>
-            <span class="method-lbl" id="methodLblCusto">Por preço de custo</span>
+          <div class="field field-full" id="methodToggleWrap">
+            <span class="field-label">Método de precificação</span>
+            <div class="method-row">
+              <span class="method-lbl" id="methodLblVenda">Por preço de venda</span>
+              <label class="switch">
+                <input type="checkbox" id="methodToggle">
+                <span class="switch-slider"></span>
+              </label>
+              <span class="method-lbl" id="methodLblCusto">Por preço de custo</span>
+            </div>
           </div>
+
+          <div class="badge badge-tier field-full" id="badgeTier">
+            <span class="tag" id="badgeTierTag"></span>
+            <span id="badgeTierInfo"></span>
+          </div>
+
+          <div class="badge badge-pix field-full" id="badgePix">
+            <span class="tag">Subsídio Pix</span>
+            <span id="badgePixInfo"></span>
+          </div>
+
+          <label class="toggle-field field-full" id="pixToggleWrap">
+            <span class="field-label">Subsídio Pix</span>
+            <div class="toggle-row">
+              <span class="toggle-label">Aplicar subsídio no cálculo</span>
+              <label class="switch">
+                <input type="checkbox" id="pixToggle" checked>
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Custo do Produto (R$)</span>
+            <div class="input-prefix">
+              <span class="pfx">R$</span>
+              <input id="custo" type="number" inputmode="decimal" step="0.01" min="0">
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Frete (R$)</span>
+            <div class="input-prefix">
+              <span class="pfx">R$</span>
+              <input id="frete" type="number" inputmode="decimal" step="0.01" min="0">
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label" id="labelMargem">Margem de Lucro (%) (Por preço de custo)</span>
+            <div class="input-suffix">
+              <input id="margem" type="number" inputmode="decimal" step="0.1" min="0">
+              <span class="sfx">%</span>
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label" id="labelComissao">Comissão Marketplace (%)</span>
+            <div class="input-suffix">
+              <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0">
+              <span class="sfx">%</span>
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label" id="labelImpostos">Impostos (%)</span>
+            <div class="input-suffix">
+              <input id="impostos" type="number" inputmode="decimal" step="0.1" min="0">
+              <span class="sfx">%</span>
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Outras Porcentagens (%)</span>
+            <div class="input-suffix">
+              <input id="outrasPct" type="number" inputmode="decimal" step="0.1" min="0">
+              <span class="sfx">%</span>
+            </div>
+          </label>
+
+          <div class="section-divider">
+            <span>Custos Fixos por Venda</span>
+          </div>
+
+          <label class="field">
+            <span class="field-label" id="labelFixoMp">Fixo Marketplace (R$)</span>
+            <div class="input-prefix">
+              <span class="pfx">R$</span>
+              <input id="fixoMp" type="number" inputmode="decimal" step="0.01" min="0">
+            </div>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Operacional (R$)</span>
+            <div class="input-prefix">
+              <span class="pfx">R$</span>
+              <input id="operacional" type="number" inputmode="decimal" step="0.01" min="0">
+            </div>
+          </label>
         </div>
 
-        <div class="badge badge-tier field-full" id="badgeTier">
-          <span class="tag" id="badgeTierTag"></span>
-          <span id="badgeTierInfo"></span>
-        </div>
-
-        <div class="badge badge-pix field-full" id="badgePix">
-          <span class="tag">Subsídio Pix</span>
-          <span id="badgePixInfo"></span>
-        </div>
-
-        <label class="toggle-field field-full" id="pixToggleWrap">
-          <span class="field-label">Subsídio Pix</span>
-          <div class="toggle-row">
-            <span class="toggle-label">Aplicar subsídio no cálculo</span>
-            <label class="switch">
-              <input type="checkbox" id="pixToggle" checked>
-              <span class="switch-slider"></span>
-            </label>
-          </div>
-        </label>
-
-        <label class="field">
-          <span class="field-label">Custo do Produto (R$)</span>
-          <div class="input-wrap prefix">
-            <span class="pfix">R$</span>
-            <input id="custo" type="number" inputmode="decimal" step="0.01" min="0">
-          </div>
-        </label>
-
-        <label class="field">
-          <span class="field-label">Frete (R$)</span>
-          <div class="input-wrap prefix">
-            <span class="pfix">R$</span>
-            <input id="frete" type="number" inputmode="decimal" step="0.01" min="0">
-          </div>
-        </label>
-
-        <label class="field">
-          <span class="field-label" id="labelMargem">Margem de Lucro (%) (Por preço de custo)</span>
-          <div class="input-wrap suffix">
-            <input id="margem" type="number" inputmode="decimal" step="0.1" min="0">
-            <span class="sfix">%</span>
-          </div>
-        </label>
-
-        <label class="field">
-          <span class="field-label" id="labelComissao">Comissão Marketplace (%)</span>
-          <div class="input-wrap suffix">
-            <input id="comissao" type="number" inputmode="decimal" step="0.1" min="0">
-            <span class="sfix">%</span>
-          </div>
-        </label>
-
-        <label class="field">
-          <span class="field-label" id="labelImpostos">Impostos (%)</span>
-          <div class="input-wrap suffix">
-            <input id="impostos" type="number" inputmode="decimal" step="0.1" min="0">
-            <span class="sfix">%</span>
-          </div>
-        </label>
-
-        <label class="field">
-          <span class="field-label">Outras Porcentagens (%)</span>
-          <div class="input-wrap suffix">
-            <input id="outrasPct" type="number" inputmode="decimal" step="0.1" min="0">
-            <span class="sfix">%</span>
-          </div>
-        </label>
-
-        <div class="section-divider">
-          <span>Custos Fixos por Venda</span>
-        </div>
-
-        <label class="field">
-          <span class="field-label" id="labelFixoMp">Fixo Marketplace (R$)</span>
-          <div class="input-wrap prefix">
-            <span class="pfix">R$</span>
-            <input id="fixoMp" type="number" inputmode="decimal" step="0.01" min="0">
-          </div>
-        </label>
-
-        <label class="field">
-          <span class="field-label">Operacional (R$)</span>
-          <div class="input-wrap prefix">
-            <span class="pfix">R$</span>
-            <input id="operacional" type="number" inputmode="decimal" step="0.01" min="0">
-          </div>
-        </label>
-      </div>
-
-      <div class="calc-output">
-        <div class="output-header">
+        <div class="calc-output">
           <p class="card-kicker">Resultado</p>
+
+          <div class="preco-readout">
+            <span class="preco-label">Preço de venda sugerido</span>
+            <span class="preco-value" id="precoFinal">R$ 0,00</span>
+          </div>
+
+          <div class="preco-pix-bloco" id="precoPix">
+            <span class="preco-pix-label">Com pagamento via Pix</span>
+            <div class="preco-pix-value" id="precoPixVal">R$ 0,00</div>
+            <span class="preco-pix-nota" id="precoPixNota">desconto de 0% absorvido pelo vendedor</span>
+          </div>
+
+          <button class="btn-detalhar" id="btnDetalhar" aria-expanded="false" type="button">
+            <span class="btn-detalhar-icone" aria-hidden="true">▸</span>
+            Detalhar cálculo
+          </button>
+
+          <div class="detalhe-calculo" id="detalheCalculo">
+            <h3>Passo a passo do cálculo</h3>
+
+            <div class="passo-calculo">
+              <span class="passo-num-dt">01</span>
+              <div>
+                <p id="dt01Desc">Custo base = custo + frete + fixo MP + operacional</p>
+                <p class="passo-resultado" id="dt01Res">R$ 0,00</p>
+              </div>
+            </div>
+
+            <div class="passo-calculo">
+              <span class="passo-num-dt">02</span>
+              <div>
+                <p id="dt02Desc">Soma dos percentuais = margem + comissão + impostos + outras%</p>
+                <p class="passo-resultado" id="dt02Res">0,0%</p>
+              </div>
+            </div>
+
+            <div class="passo-calculo">
+              <span class="passo-num-dt">03</span>
+              <div>
+                <p id="dt03Desc">Divisor = 1 − (soma% ÷ 100)</p>
+                <p class="passo-resultado" id="dt03Res">0,000</p>
+              </div>
+            </div>
+
+            <div class="passo-calculo">
+              <span class="passo-num-dt">04</span>
+              <div>
+                <p id="dt04Desc">Preço de venda = custo base ÷ divisor</p>
+                <p class="passo-resultado" id="dt04Res">R$ 0,00</p>
+              </div>
+            </div>
+
+            <div class="passo-calculo passo-pix" id="dt05Pix">
+              <span class="passo-num-dt">05</span>
+              <div>
+                <p id="dt05Desc">Preço com Pix = preço de venda × (1 − subsídio%)</p>
+                <p class="passo-resultado" id="dt05Res">R$ 0,00</p>
+                <p id="dt05Nota" style="font-size:.8rem;margin-top:4px;"></p>
+              </div>
+            </div>
+
+          </div>
+
+          <p class="warning" id="calcWarning" hidden></p>
+
+          <ul class="breakdown">
+            <li>
+              <span class="swatch s-custo"></span>
+              Custo total
+              <span id="bdCusto">R$ 0,00</span>
+            </li>
+            <li>
+              <span class="swatch s-comissao"></span>
+              <span id="bdLabelComissao">Comissão</span>
+              <span id="bdComissao">R$ 0,00</span>
+            </li>
+            <li class="li-tarifa-fixa" id="liTarifaFixa">
+              <span class="swatch s-tarifa"></span>
+              <span id="bdLabelTarifaFixa">Tarifa fixa</span>
+              <span id="bdTarifaFixa">R$ 0,00</span>
+            </li>
+            <li class="li-impostos" id="liImpostos">
+              <span class="swatch s-impostos"></span>
+              <span id="bdLabelImpostos">Impostos + Outras %</span>
+              <span id="bdImpostos">R$ 0,00</span>
+            </li>
+            <li class="li-pix" id="liPix">
+              <span class="swatch s-pix"></span>
+              Desconto Pix (absorvido)
+              <span id="bdPix">− R$ 0,00</span>
+            </li>
+            <li>
+              <span class="swatch s-margem"></span>
+              Margem (lucro)
+              <span id="bdMargem">R$ 0,00</span>
+            </li>
+          </ul>
         </div>
-
-        <div class="preco-readout">
-          <span class="preco-label">Preço de venda sugerido</span>
-          <span class="preco-value" id="precoFinal">R$ 0,00</span>
-        </div>
-
-        <div class="preco-pix-bloco" id="precoPix">
-          <span class="preco-pix-label">Com pagamento via Pix</span>
-          <div class="preco-pix-value" id="precoPixVal">R$ 0,00</div>
-          <span class="preco-pix-nota" id="precoPixNota">desconto de 0% absorvido pelo vendedor</span>
-        </div>
-
-        <button class="btn-detalhar" id="btnDetalhar" aria-expanded="false" type="button">
-          <span class="btn-detalhar-icone" aria-hidden="true">▸</span>
-          Detalhar cálculo
-        </button>
-
-        <div class="detalhe-calculo" id="detalheCalculo">
-          <h3>Passo a passo do cálculo</h3>
-
-          <div class="passo-calculo">
-            <span class="passo-num-dt">01</span>
-            <div>
-              <p id="dt01Desc">Custo base = custo + frete + fixo MP + operacional</p>
-              <p class="passo-resultado" id="dt01Res">R$ 0,00</p>
-            </div>
-          </div>
-
-          <div class="passo-calculo">
-            <span class="passo-num-dt">02</span>
-            <div>
-              <p id="dt02Desc">Soma dos percentuais = margem + comissão + impostos + outras%</p>
-              <p class="passo-resultado" id="dt02Res">0,0%</p>
-            </div>
-          </div>
-
-          <div class="passo-calculo">
-            <span class="passo-num-dt">03</span>
-            <div>
-              <p id="dt03Desc">Divisor = 1 − (soma% ÷ 100)</p>
-              <p class="passo-resultado" id="dt03Res">0,000</p>
-            </div>
-          </div>
-
-          <div class="passo-calculo">
-            <span class="passo-num-dt">04</span>
-            <div>
-              <p id="dt04Desc">Preço de venda = custo base ÷ divisor</p>
-              <p class="passo-resultado" id="dt04Res">R$ 0,00</p>
-            </div>
-          </div>
-
-          <div class="passo-calculo passo-pix" id="dt05Pix">
-            <span class="passo-num-dt">05</span>
-            <div>
-              <p id="dt05Desc">Preço com Pix = preço de venda × (1 − subsídio%)</p>
-              <p class="passo-resultado" id="dt05Res">R$ 0,00</p>
-              <p id="dt05Nota" style="font-size:.78rem;margin-top:4px;"></p>
-            </div>
-          </div>
-        </div>
-
-        <p class="warning" id="calcWarning" hidden></p>
-
-        <ul class="breakdown">
-          <li>
-            <span class="swatch s-custo"></span>
-            Custo total
-            <span id="bdCusto">R$ 0,00</span>
-          </li>
-          <li>
-            <span class="swatch s-comissao"></span>
-            <span id="bdLabelComissao">Comissão</span>
-            <span id="bdComissao">R$ 0,00</span>
-          </li>
-          <li class="li-tarifa-fixa" id="liTarifaFixa">
-            <span class="swatch s-tarifa"></span>
-            <span id="bdLabelTarifaFixa">Tarifa fixa</span>
-            <span id="bdTarifaFixa">R$ 0,00</span>
-          </li>
-          <li class="li-impostos" id="liImpostos">
-            <span class="swatch s-impostos"></span>
-            <span id="bdLabelImpostos">Impostos + Outras %</span>
-            <span id="bdImpostos">R$ 0,00</span>
-          </li>
-          <li class="li-pix" id="liPix">
-            <span class="swatch s-pix"></span>
-            Desconto Pix (absorvido)
-            <span id="bdPix">− R$ 0,00</span>
-          </li>
-          <li>
-            <span class="swatch s-margem"></span>
-            Margem (lucro)
-            <span id="bdMargem">R$ 0,00</span>
-          </li>
-        </ul>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="como-funciona" class="section-conteudo">
-  <div class="section-inner">
-    <div class="section-header">
-      <p class="section-eyebrow">FICHA TÉCNICA</p>
+  <section id="como-funciona" class="manual">
+    <div class="manual-inner">
+      <p class="eyebrow eyebrow-dark">FICHA TÉCNICA</p>
       <h2>Como essa conta funciona</h2>
-      <p>Markup divisor é o método correto para precificar em marketplaces — entenda o passo a passo.</p>
-    </div>
 
-    <div class="passos">
-      <div class="passo-item">
-        <span class="passo-num">01</span>
-        <div class="passo-body">
-          <h3>O problema do "custo vezes 1,3"</h3>
-          <p>Multiplicar o custo por 1,30 calcula 30% de margem <strong>sobre o custo</strong>. Mas comissão e taxas da plataforma são cobradas em cima do <strong>preço de venda</strong>, não do custo. Misturar as duas bases é o erro mais comum — e ele faz o preço final ficar mais baixo do que deveria.</p>
-        </div>
-      </div>
-
-      <div class="passo-item">
-        <span class="passo-num">02</span>
-        <div class="passo-body">
-          <h3>A fórmula do divisor</h3>
-          <p>Margem, comissão e taxas percentuais incidem todas sobre o mesmo preço final. Por isso elas se somam e entram juntas num único divisor:</p>
-          <div class="formula-bloco">
-            <code>Preço de venda = (Custo + custos fixos) ÷ [1 − (margem % + comissão % + adicional %)]</code>
+      <ol class="passos">
+        <li>
+          <span class="passo-num-txt">01</span>
+          <div class="passo-corpo">
+            <h3>O problema do "custo vezes 1,3"</h3>
+            <p>Multiplicar o custo por 1,30 calcula 30% de margem <strong>sobre o custo</strong>. Mas comissão e taxas da plataforma são cobradas em cima do <strong>preço de venda</strong>, não do custo. Misturar as duas bases é o erro mais comum — e ele faz o preço final ficar mais baixo do que deveria.</p>
           </div>
-          <p>Custos <em>fixos</em> em reais — frete, tarifa fixa — não entram no divisor. Eles somam direto na base de custo, porque não variam com o preço.</p>
-        </div>
-      </div>
+        </li>
 
-      <div class="passo-item">
-        <span class="passo-num">03</span>
-        <div class="passo-body">
-          <h3>O erro mais comum: fazer em etapas</h3>
-          <p>Dividir o custo em duas contas separadas — primeiro pela comissão, depois pela margem — não dá o mesmo resultado que somar os percentuais de uma vez. As contas se compõem (multiplicam) em vez de se somar, e o preço final sai errado.</p>
-          <div class="tabela-comparativa" role="table">
-            <div class="tc-row tc-head" role="row">
-              <span>Método</span><span>Conta</span><span>Preço final</span><span>Margem real</span>
+        <li>
+          <span class="passo-num-txt">02</span>
+          <div class="passo-corpo">
+            <h3>A fórmula do divisor</h3>
+            <p>Margem, comissão e taxas percentuais incidem todas sobre o mesmo preço final. Por isso elas se somam e entram juntas num único divisor:</p>
+            <div class="formula-bloco">
+              <code>Preço de venda = (Custo + custos fixos) ÷ [1 − (margem % + comissão % + adicional %)]</code>
             </div>
-            <div class="tc-row tc-good" role="row">
-              <span>Divisor único (correto)</span><span>483,07 ÷ 0,43</span><span>R$ 1.123,42</span><span>30,0% exatos</span>
-            </div>
-            <div class="tc-row" role="row">
-              <span>Margem sobre custo, depois ÷ taxas</span><span>627,99 ÷ 0,73</span><span>R$ 860,26</span><span>~16,9%</span>
-            </div>
-            <div class="tc-row" role="row">
-              <span>Comissão contada duas vezes</span><span>627,99 ÷ 0,54</span><span>R$ 1.162,94</span><span>~31,5%</span>
-            </div>
+            <p>Custos <em>fixos</em> em reais — frete, tarifa fixa — não entram no divisor. Eles somam direto na base de custo, porque não variam com o preço.</p>
           </div>
-          <p class="exemplo-nota">Exemplo: custo R$ 483,07, meta 30% de margem, 19% ML Premium + 8% adicional.</p>
-        </div>
-      </div>
+        </li>
 
-      <div class="passo-item">
-        <span class="passo-num">04</span>
-        <div class="passo-body">
-          <h3>Onde entram frete e valores fixos em reais</h3>
-          <p>Se a gente paga o frete do anúncio ou tem um custo fixo adicional em R$, isso soma direto no custo antes de dividir — diferente da comissão e do adicional em %, que incidem sobre o preço e ficam no divisor.</p>
-        </div>
-      </div>
-
-      <div class="passo-item">
-        <span class="passo-num">05</span>
-        <div class="passo-body">
-          <h3>Shopee: faixas variáveis + Subsídio Pix</h3>
-          <p>A Shopee cobra comissão e tarifa fixa de acordo com a <strong>faixa de preço de venda</strong>. A calculadora resolve isso iterativamente: testa qual faixa o preço calculado cai, ajusta a tarifa e recalcula até convergir.</p>
-          <div class="tabela-faixas" role="table">
-            <div class="tf-row tf-head" role="row">
-              <span>Faixa de preço</span><span>Comissão + Tarifa</span><span>Subsídio Pix</span>
+        <li>
+          <span class="passo-num-txt">03</span>
+          <div class="passo-corpo">
+            <h3>O erro mais comum: fazer em etapas</h3>
+            <p>Dividir o custo em duas contas separadas — primeiro pela comissão, depois pela margem — não dá o mesmo resultado que somar os percentuais de uma vez. As contas se compõem (multiplicam) em vez de se somar, e o preço final sai errado.</p>
+            <div class="tabela-comparativa" role="table">
+              <div class="tc-row tc-head" role="row">
+                <span>Método</span><span>Conta</span><span>Preço final</span><span>Margem real</span>
+              </div>
+              <div class="tc-row tc-good" role="row">
+                <span>Divisor único (correto)</span><span>483,07 ÷ 0,43</span><span>R$ 1.123,42</span><span>30,0% exatos</span>
+              </div>
+              <div class="tc-row" role="row">
+                <span>Margem sobre custo, depois ÷ taxas</span><span>627,99 ÷ 0,73</span><span>R$ 860,26</span><span>~16,9%</span>
+              </div>
+              <div class="tc-row" role="row">
+                <span>Comissão contada duas vezes</span><span>627,99 ÷ 0,54</span><span>R$ 1.162,94</span><span>~31,5%</span>
+              </div>
             </div>
-            <div class="tf-row" role="row">
-              <span>Abaixo de R$ 8,00</span><span><strong>50% do preço</strong></span><span class="tf-sem-pix">—</span>
-            </div>
-            <div class="tf-row" role="row">
-              <span>R$ 8,00 a R$ 79,99</span><span>20% + R$ 4,00</span><span class="tf-sem-pix">—</span>
-            </div>
-            <div class="tf-row" role="row">
-              <span>R$ 80,00 a R$ 99,99</span><span>14% + R$ 16,00</span><span class="tf-pix">5%</span>
-            </div>
-            <div class="tf-row" role="row">
-              <span>R$ 100,00 a R$ 199,99</span><span>14% + R$ 20,00</span><span class="tf-pix">5%</span>
-            </div>
-            <div class="tf-row" role="row">
-              <span>R$ 200,00 a R$ 499,99</span><span>14% + R$ 26,00</span><span class="tf-pix">5%</span>
-            </div>
-            <div class="tf-row" role="row">
-              <span>Acima de R$ 500,00</span><span>14% + R$ 26,00</span><span class="tf-pix">8%</span>
-            </div>
+            <p class="exemplo-nota">Exemplo: custo R$ 483,07, meta 30% de margem, 19% ML Premium + 8% adicional.</p>
           </div>
-          <p class="exemplo-nota">⚠️ Faixa abaixo de R$ 8,00: a tarifa não é fixa — é 50% do preço de venda (já inclui a comissão). Por ser variável, ela entra no divisor junto com margem, não no numerador como custo.</p>
-          <p class="exemplo-nota">📌 Subsídio Pix: desconto que a Shopee oferece ao comprador via Pix, absorvido pelo vendedor. A calculadora mostra os dois preços: anunciado e efetivo com Pix.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+        </li>
 
-<section class="section-cta">
-  <div class="section-inner" style="padding-bottom:0">
-    <h2>Pronto para precificar com precisão?</h2>
-    <p>Use a calculadora acima e nunca mais erre o preço dos seus produtos em marketplaces.</p>
-    <div class="cta-group">
-      <a href="#calculadora" class="btn-primary">Calcular agora</a>
-      <a href="#como-funciona" class="btn-ghost">Entender o método</a>
+        <li>
+          <span class="passo-num-txt">04</span>
+          <div class="passo-corpo">
+            <h3>Onde entram frete e valores fixos em reais</h3>
+            <p>Se a gente paga o frete do anúncio ou tem um custo fixo adicional em R$, isso soma direto no custo antes de dividir — diferente da comissão e do adicional em %, que incidem sobre o preço e ficam no divisor.</p>
+          </div>
+        </li>
+
+        <li>
+          <span class="passo-num-txt">05</span>
+          <div class="passo-corpo">
+            <h3>Shopee: faixas variáveis + Subsídio Pix</h3>
+            <p>A Shopee cobra comissão e tarifa fixa de acordo com a <strong>faixa de preço de venda</strong>. A calculadora resolve isso iterativamente: testa qual faixa o preço calculado cai, ajusta a tarifa e recalcula até convergir.</p>
+            <div class="tabela-faixas" role="table">
+              <div class="tf-row tf-head" role="row">
+                <span>Faixa de preço</span><span>Comissão + Tarifa</span><span>Subsídio Pix</span>
+              </div>
+              <div class="tf-row" style="background:rgba(239,68,68,.06)" role="row">
+                <span>Abaixo de R$ 8,00 ⚠️</span><span><strong>50% do preço</strong></span><span class="tf-sem-pix">—</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 8,00 a R$ 79,99</span><span>20% + R$ 4,00</span><span class="tf-sem-pix">—</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 80,00 a R$ 99,99</span><span>14% + R$ 16,00</span><span class="tf-pix">5%</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 100,00 a R$ 199,99</span><span>14% + R$ 20,00</span><span class="tf-pix">5%</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>R$ 200,00 a R$ 499,99</span><span>14% + R$ 26,00</span><span class="tf-pix">5%</span>
+              </div>
+              <div class="tf-row" role="row">
+                <span>Acima de R$ 500,00</span><span>14% + R$ 26,00</span><span class="tf-pix">8%</span>
+              </div>
+            </div>
+            <p>⚠️ <strong>Atenção faixa abaixo de R$ 8,00:</strong> a tarifa não é fixa — é <strong>50% do preço de venda</strong> (já inclui a comissão). Por ser variável (proporcional ao preço), ela entra no <strong>divisor</strong> junto com margem, não no numerador como custo. A fórmula muda:</p>
+            <div class="formula-bloco">
+              <code>Preço = Custo ÷ [1 − (margem% + 50% tarifa) ÷ 100]</code>
+            </div>
+            <p>O <strong>Subsídio Pix</strong> é um desconto que a Shopee oferece ao comprador quando ele paga via Pix — e esse desconto é absorvido pelo vendedor. A calculadora mostra os dois preços: o preço de venda anunciado e o <strong>preço efetivo com Pix</strong>, que é o valor real recebido após a venda.</p>
+            <p class="exemplo-nota">Exemplo Pix: item na faixa R$ 200–499,99. Preço de venda = R$ 350,00. Com Pix (5%): R$ 350,00 × 0,95 = <strong>R$ 332,50</strong> líquido recebido.</p>
+          </div>
+        </li>
+      </ol>
     </div>
-  </div>
-</section>
+  </section>
 
 </main>
 
 <footer class="rodape">
-  <div class="rodape-inner">
-    <p>Painel de Preços · Calculadora markup divisor</p>
-    <div class="rodape-links">
-      <a href="#calculadora">Calculadora</a>
-      <a href="#como-funciona">Como funciona</a>
-    </div>
-  </div>
+  <p>Calculadora interna · método de markup divisor.</p>
 </footer>
 
 <script src="script.js"></script>
