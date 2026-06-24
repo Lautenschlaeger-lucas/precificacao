@@ -31,6 +31,7 @@
   --azul-claro: #60A5FA;
   --verde: #22C55E;
   --verde-pix: #10B981;
+  --amarelo: #F59E0B;
   --danger: #EF4444;
   --cinza-dado: #475569;
 
@@ -284,7 +285,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
 }
 
 /* ── breakdown ── */
-.breakdown{ list-style:none; margin: 0 0 0; padding: 0; }
+.breakdown{ list-style:none; margin: 0; padding: 0; }
 .breakdown li{
   display:flex; align-items:center; gap: 10px;
   font-family: var(--fonte-dado); font-size: .9rem;
@@ -296,12 +297,20 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
 .s-custo{ background: var(--cinza-dado); }
 .s-comissao{ background: var(--azul); }
 .s-tarifa{ background: var(--azul-claro); }
+.s-impostos{ background: var(--amarelo); }
 .s-pix{ background: var(--verde-pix); }
 .s-margem{ background: var(--ciano); }
 
+/* linhas condicionais */
 .breakdown .li-pix{ display: none; color: #6EE7B7 !important; }
 .breakdown .li-pix.ativo{ display: flex; }
 .li-pix .swatch{ background: var(--verde-pix); }
+
+.breakdown .li-tarifa-fixa{ display: none; }
+.breakdown .li-tarifa-fixa.ativo{ display: flex; }
+
+.breakdown .li-impostos{ display: none; }
+.breakdown .li-impostos.ativo{ display: flex; }
 
 .warning{
   background: rgba(239,68,68,.12); border: 1px solid var(--danger);
@@ -620,7 +629,6 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           <div class="detalhe-calculo" id="detalheCalculo">
             <h3>Passo a passo do cálculo</h3>
 
-            <!-- 01: custo base -->
             <div class="passo-calculo">
               <span class="passo-num-dt">01</span>
               <div>
@@ -629,7 +637,6 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
               </div>
             </div>
 
-            <!-- 02: percentuais -->
             <div class="passo-calculo">
               <span class="passo-num-dt">02</span>
               <div>
@@ -638,7 +645,6 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
               </div>
             </div>
 
-            <!-- 03: divisor -->
             <div class="passo-calculo">
               <span class="passo-num-dt">03</span>
               <div>
@@ -647,7 +653,6 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
               </div>
             </div>
 
-            <!-- 04: preço de venda -->
             <div class="passo-calculo">
               <span class="passo-num-dt">04</span>
               <div>
@@ -656,7 +661,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
               </div>
             </div>
 
-            <!-- 05: subsídio pix (só shopee) -->
+            <!-- passo pix — só shopee -->
             <div class="passo-calculo passo-pix" id="dt05Pix">
               <span class="passo-num-dt">05</span>
               <div>
@@ -670,12 +675,42 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
 
           <p class="warning" id="calcWarning" hidden></p>
 
+          <!-- BREAKDOWN — cada linha tem swatch + label + valor -->
           <ul class="breakdown">
-            <li><span class="swatch s-custo"></span>Custo total<span id="bdCusto">R$ 0,00</span></li>
-            <li><span class="swatch s-comissao"></span><span id="bdLabelComissao">Comissão</span><span id="bdComissao">R$ 0,00</span></li>
-            <li><span class="swatch s-tarifa"></span><span id="bdLabelTarifa">Adicional</span><span id="bdTarifa">R$ 0,00</span></li>
-            <li class="li-pix" id="liPix"><span class="swatch s-pix"></span>Desconto Pix (absorvido)<span id="bdPix">− R$ 0,00</span></li>
-            <li><span class="swatch s-margem"></span>Margem (lucro)<span id="bdMargem">R$ 0,00</span></li>
+            <li>
+              <span class="swatch s-custo"></span>
+              Custo total
+              <span id="bdCusto">R$ 0,00</span>
+            </li>
+            <li>
+              <span class="swatch s-comissao"></span>
+              <span id="bdLabelComissao">Comissão</span>
+              <span id="bdComissao">R$ 0,00</span>
+            </li>
+            <!-- tarifa fixa: só visível quando aplicável (shopee faixas 1-5 ou mp simples com fixoMp) -->
+            <li class="li-tarifa-fixa" id="liTarifaFixa">
+              <span class="swatch s-tarifa"></span>
+              <span id="bdLabelTarifaFixa">Tarifa fixa</span>
+              <span id="bdTarifaFixa">R$ 0,00</span>
+            </li>
+            <!-- impostos + outras % -->
+            <li class="li-impostos" id="liImpostos">
+              <span class="swatch s-impostos"></span>
+              <span id="bdLabelImpostos">Impostos + Outras %</span>
+              <span id="bdImpostos">R$ 0,00</span>
+            </li>
+            <!-- desconto pix shopee -->
+            <li class="li-pix" id="liPix">
+              <span class="swatch s-pix"></span>
+              Desconto Pix (absorvido)
+              <span id="bdPix">− R$ 0,00</span>
+            </li>
+            <!-- margem — sempre último (negrito via CSS last-child) -->
+            <li>
+              <span class="swatch s-margem"></span>
+              Margem (lucro)
+              <span id="bdMargem">R$ 0,00</span>
+            </li>
           </ul>
         </div><!-- /output -->
       </div><!-- /card -->
@@ -791,49 +826,36 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
    CONFIG MARKETPLACES
    ============================================================ */
 const MP = {
-  mlclassico:    { comissao:14, impostos:8, fixoMp:0, labelCom:'Comissão ML Clássico',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  mlpremium:     { comissao:19, impostos:8, fixoMp:0, labelCom:'Comissão ML Premium',        labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  amazon:        { comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Amazon',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  magalu:        { comissao:16, impostos:0, fixoMp:0, labelCom:'Comissão Magalu',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  aliexpress:    { comissao:8,  impostos:0, fixoMp:0, labelCom:'Comissão AliExpress',        labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  americanas:    { comissao:19, impostos:0, fixoMp:0, labelCom:'Comissão Americanas',        labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  carrefour:     { comissao:16, impostos:0, fixoMp:0, labelCom:'Comissão Carrefour',         labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  casasbahia:    { comissao:21, impostos:0, fixoMp:0, labelCom:'Comissão Casas Bahia',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  kabum:         { comissao:14, impostos:0, fixoMp:0, labelCom:'Comissão KaBuM!',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  leroymerlin:   { comissao:18, impostos:0, fixoMp:0, labelCom:'Comissão Leroy Merlin',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  colombo:       { comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Lojas Colombo',     labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  madeiramadeira:{ comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Madeira-Madeira',   labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  netshoes:      { comissao:20, impostos:0, fixoMp:0, labelCom:'Comissão Netshoes',          labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  olist:         { comissao:21, impostos:0, fixoMp:0, labelCom:'Comissão Olist',             labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  shein:         { comissao:16, impostos:0, fixoMp:0, labelCom:'Comissão Shein',             labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  shopify:       { comissao:2,  impostos:0, fixoMp:0, labelCom:'Comissão Shopify',           labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  tiktok:        { comissao:12, impostos:0, fixoMp:0, labelCom:'Comissão TikTok Shop',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  wish:          { comissao:5,  impostos:0, fixoMp:0, labelCom:'Comissão Wish',              labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  mlclassico:    { comissao:14, impostos:8,  fixoMp:0, labelCom:'Comissão ML Clássico',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  mlpremium:     { comissao:19, impostos:8,  fixoMp:0, labelCom:'Comissão ML Premium',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  amazon:        { comissao:20, impostos:0,  fixoMp:0, labelCom:'Comissão Amazon',           labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  magalu:        { comissao:16, impostos:0,  fixoMp:0, labelCom:'Comissão Magalu',           labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  aliexpress:    { comissao:8,  impostos:0,  fixoMp:0, labelCom:'Comissão AliExpress',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  americanas:    { comissao:19, impostos:0,  fixoMp:0, labelCom:'Comissão Americanas',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  carrefour:     { comissao:16, impostos:0,  fixoMp:0, labelCom:'Comissão Carrefour',        labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  casasbahia:    { comissao:21, impostos:0,  fixoMp:0, labelCom:'Comissão Casas Bahia',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  kabum:         { comissao:14, impostos:0,  fixoMp:0, labelCom:'Comissão KaBuM!',           labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  leroymerlin:   { comissao:18, impostos:0,  fixoMp:0, labelCom:'Comissão Leroy Merlin',     labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  colombo:       { comissao:20, impostos:0,  fixoMp:0, labelCom:'Comissão Lojas Colombo',    labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  madeiramadeira:{ comissao:20, impostos:0,  fixoMp:0, labelCom:'Comissão Madeira-Madeira',  labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  netshoes:      { comissao:20, impostos:0,  fixoMp:0, labelCom:'Comissão Netshoes',         labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  olist:         { comissao:21, impostos:0,  fixoMp:0, labelCom:'Comissão Olist',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  shein:         { comissao:16, impostos:0,  fixoMp:0, labelCom:'Comissão Shein',            labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  shopify:       { comissao:2,  impostos:0,  fixoMp:0, labelCom:'Comissão Shopify',          labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  tiktok:        { comissao:12, impostos:0,  fixoMp:0, labelCom:'Comissão TikTok Shop',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  wish:          { comissao:5,  impostos:0,  fixoMp:0, labelCom:'Comissão Wish',             labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
   shopee: {
     labelCom: 'Comissão (definida pela faixa)',
     labelImpostos: 'Impostos (%)',
-    labelFixoMp:  'Fixo Marketplace (R$)',
+    labelFixoMp: 'Fixo Marketplace (R$)',
     tipo: 'faixas',
-    /*
-      Faixas conforme tabela oficial (imagem):
-        Faixa 0: abaixo de R$8,00  → tarifa VARIÁVEL = 50% do preço de venda (entra no divisor!)
-        Faixa 1: R$8,00–R$79,99   → 20% + R$4    — sem Pix
-        Faixa 2: R$80–R$99,99     → 14% + R$16   — Pix 5%
-        Faixa 3: R$100–R$199,99   → 14% + R$20   — Pix 5%
-        Faixa 4: R$200–R$499,99   → 14% + R$26   — Pix 5%
-        Faixa 5: acima de R$500   → 14% + R$26   — Pix 8%
-
-      ATENÇÃO faixa 0: a tarifa é 50% do PREÇO DE VENDA (variável),
-      portanto entra no DIVISOR (não no numerador como custo fixo).
-      Fórmula: Preço = Custo ÷ [1 − (margem% + comissão% + 50%)]
-    */
     faixas: [
-      { id:0, min:0,    max:7.99,   com:0, tar:0,   tarifaPct:50, pixPct:0 },
-      { id:1, min:8,    max:79.99,  com:20, tar:4,  tarifaPct:0,  pixPct:0 },
-      { id:2, min:80,   max:99.99,  com:14, tar:16, tarifaPct:0,  pixPct:5 },
-      { id:3, min:100,  max:199.99, com:14, tar:20, tarifaPct:0,  pixPct:5 },
-      { id:4, min:200,  max:499.99, com:14, tar:26, tarifaPct:0,  pixPct:5 },
-      { id:5, min:500,  max:Infinity, com:14, tar:26, tarifaPct:0, pixPct:8 }
+      { id:0, min:0,    max:7.99,      com:0,  tar:0,  tarifaPct:50, pixPct:0 },
+      { id:1, min:8,    max:79.99,     com:20, tar:4,  tarifaPct:0,  pixPct:0 },
+      { id:2, min:80,   max:99.99,     com:14, tar:16, tarifaPct:0,  pixPct:5 },
+      { id:3, min:100,  max:199.99,    com:14, tar:20, tarifaPct:0,  pixPct:5 },
+      { id:4, min:200,  max:499.99,    com:14, tar:26, tarifaPct:0,  pixPct:5 },
+      { id:5, min:500,  max:Infinity,  com:14, tar:26, tarifaPct:0,  pixPct:8 }
     ]
   }
 };
@@ -841,67 +863,67 @@ const MP = {
 /* ============================================================
    HELPERS
    ============================================================ */
-const R$    = n => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(n);
-const pct   = n => n.toFixed(1).replace('.', ',') + '%';
-const dec3  = n => n.toFixed(3).replace('.', ',');
-const val   = id => parseFloat(document.getElementById(id).value) || 0;
-const el    = id => document.getElementById(id);
-const txt   = (id, v) => el(id).textContent = v;
-const html  = (id, v) => el(id).innerHTML = v;
+const R$   = n => new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(n);
+const pct  = n => n.toFixed(1).replace('.', ',') + '%';
+const dec3 = n => n.toFixed(3).replace('.', ',');
+const val  = id => parseFloat(document.getElementById(id).value) || 0;
+const el   = id => document.getElementById(id);
+const txt  = (id, v) => el(id).textContent = v;
+const html = (id, v) => el(id).innerHTML = v;
+
+/* helpers de visibilidade para linhas condicionais do breakdown */
+const bdShow = (liId, labelId, labelTxt, valId, valor) => {
+  el(liId).classList.add('ativo');
+  txt(labelId, labelTxt);
+  txt(valId, R$(valor));
+};
+const bdHide = liId => el(liId).classList.remove('ativo');
 
 /* ============================================================
    SHOPEE — busca faixa e itera até convergir
    ============================================================ */
 function shopeeFaixa(preco) {
   const f = MP.shopee.faixas;
-  return f.find(x => preco >= x.min && preco <= x.max) || f[f.length-1];
+  return f.find(x => preco >= x.min && preco <= x.max) || f[f.length - 1];
 }
 
-/*
-  calcPrecoFaixa: calcula o preço para uma determinada faixa.
-  Se a faixa tem tarifaPct > 0 (faixa 0 — abaixo de R$8),
-  a tarifa é VARIÁVEL (% do preço) e entra NO DIVISOR.
-  Nas demais faixas a tarifa é FIXA em R$ e entra no NUMERADOR.
-*/
-function calcPrecoFaixa(custoBase, margem, faixa, adicPct) {
+function calcPrecoFaixa(custoBase, margemPct, faixa, adicPct) {
   if (faixa.tarifaPct > 0) {
-    // Tarifa variável: Preço = Custo ÷ [1 − (margem% + com% + tarifaPct% + adic%) / 100]
-    const soma = margem + faixa.com + faixa.tarifaPct + adicPct;
+    // Faixa 0: tarifa variável (% do preço) → entra no divisor
+    const soma = margemPct + faixa.com + faixa.tarifaPct + adicPct;
     if (soma >= 100) return null;
-    return custoBase / (1 - soma/100);
+    return custoBase / (1 - soma / 100);
   } else {
-    // Tarifa fixa: Preço = (Custo + tarifa) ÷ [1 − (margem% + com% + adic%) / 100]
-    const soma = margem + faixa.com + adicPct;
+    // Faixas 1–5: tarifa fixa em R$ → entra no numerador
+    const soma = margemPct + faixa.com + adicPct;
     if (soma >= 100) return null;
-    return (custoBase + faixa.tar) / (1 - soma/100);
+    return (custoBase + faixa.tar) / (1 - soma / 100);
   }
 }
 
-function shopeeCalc(custoBase, margem, adicPct) {
+function shopeeCalc(custoBase, margemPct, adicPct) {
   const faixas = MP.shopee.faixas;
 
   // tentativa direta em cada faixa
   for (const f of faixas) {
-    const preco = calcPrecoFaixa(custoBase, margem, f, adicPct);
+    const preco = calcPrecoFaixa(custoBase, margemPct, f, adicPct);
     if (preco === null || preco <= 0 || !isFinite(preco)) continue;
     if (preco >= f.min && preco <= f.max) return { preco, faixa: f };
   }
 
   // iteração de convergência (resolve casos limítrofes entre faixas)
-  let faixa = faixas[3]; // começa na faixa 3 (R$100–199,99 — mais comum)
+  let faixa = faixas[3];
   for (let i = 0; i < 15; i++) {
-    const preco = calcPrecoFaixa(custoBase, margem, faixa, adicPct);
-    if (preco === null || preco <= 0 || !isFinite(preco)) {
-      faixa = faixas[faixas.length-1]; continue;
-    }
+    const preco = calcPrecoFaixa(custoBase, margemPct, faixa, adicPct);
+    if (preco === null || preco <= 0 || !isFinite(preco)) { faixa = faixas[faixas.length - 1]; continue; }
     const nova = shopeeFaixa(preco);
     if (nova === faixa) return { preco, faixa };
     faixa = nova;
   }
 
   // fallback na última faixa
-  const f = faixas[faixas.length-1];
-  const preco = calcPrecoFaixa(custoBase, margem, f, adicPct);
+  const f = faixas[faixas.length - 1];
+  const preco = calcPrecoFaixa(custoBase, margemPct, f, adicPct);
   if (!preco || preco <= 0) return null;
   return { preco, faixa: f };
 }
@@ -910,8 +932,8 @@ function shopeeCalc(custoBase, margem, adicPct) {
    APLICAR CONFIG DO MARKETPLACE
    ============================================================ */
 function aplicarMP() {
-  const mpId = el('calcMp').value;
-  const cfg  = MP[mpId];
+  const mpId    = el('calcMp').value;
+  const cfg     = MP[mpId];
   const isShopee = mpId === 'shopee';
 
   txt('labelComissao', cfg.labelCom);
@@ -919,18 +941,17 @@ function aplicarMP() {
   txt('labelFixoMp',   cfg.labelFixoMp);
 
   if (!isShopee) {
-    el('comissao').value   = cfg.comissao;
-    el('fixoMp').value     = cfg.fixoMp;
+    el('comissao').value = cfg.comissao;
+    el('fixoMp').value   = cfg.fixoMp;
   }
 
-  el('comissao').disabled  = isShopee;
-  el('fixoMp').disabled    = isShopee;
-
+  el('comissao').disabled = isShopee;
+  el('fixoMp').disabled   = isShopee;
   el('pixToggleWrap').classList.toggle('ativo', isShopee);
 }
 
 /* ============================================================
-   LIMPAR ELEMENTOS SHOPEE (quando troca de marketplace)
+   LIMPAR ELEMENTOS SHOPEE
    ============================================================ */
 function limparShopee() {
   el('badgeTier').classList.remove('ativo');
@@ -944,97 +965,121 @@ function limparShopee() {
    CALCULAR
    ============================================================ */
 function calcular() {
-  const mpId    = el('calcMp').value;
+  const mpId     = el('calcMp').value;
   const isShopee = mpId === 'shopee';
-  const warn    = el('calcWarning');
+  const warn     = el('calcWarning');
+  const method   = el('methodToggle').checked ? 'custo' : 'venda';
 
   limparShopee();
 
-  const custo    = val('custo');
-  const frete    = val('frete');
-  const margem  = val('margem');
-  const impostos = val('impostos');
-  const outrasPct = val('outrasPct');
+  const custo       = val('custo');
+  const frete       = val('frete');
+  const margem      = val('margem');
+  const impostos    = val('impostos');
+  const outrasPct   = val('outrasPct');
   const operacional = val('operacional');
 
-  /* ────────── SHOPEE ────────── */
+  /* ══════════════════════════════════════════════
+     SHOPEE
+     ══════════════════════════════════════════════ */
   if (isShopee) {
     const custoBase = custo + frete + operacional;
-    const method    = el('methodToggle').checked ? 'custo' : 'venda';
-    const margemEff = method === 'custo' ? 0 : margem;
-    const precoBase = method === 'custo' ? custoBase * (1 + margem/100) : custoBase;
-    const result    = shopeeCalc(precoBase, margemEff, impostos + outrasPct);
+
+    // No método "custo": margem sobre o custo já está embutida no precoBase,
+    // o divisor só carrega comissão + impostos + outras
+    const margemEff  = method === 'custo' ? 0 : margem;
+    const precoBase  = method === 'custo' ? custoBase * (1 + margem / 100) : custoBase;
+    const result     = shopeeCalc(precoBase, margemEff, impostos + outrasPct);
 
     if (!result || !isFinite(result.preco) || result.preco <= 0) {
       warn.hidden = false;
       warn.textContent = 'Não foi possível calcular com a margem desejada. Reduza a margem ou verifique os dados.';
       txt('precoFinal', '—');
-      ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
+      ['bdCusto','bdComissao','bdMargem','bdImpostos','bdTarifaFixa'].forEach(id => txt(id, '—'));
+      bdHide('liTarifaFixa'); bdHide('liImpostos');
       limparShopee();
       return;
     }
 
     warn.hidden = true;
     const { preco, faixa } = result;
+    const tarifaVar = faixa.tarifaPct > 0; // true = faixa 0
 
-    // valores derivados
-    const tarifaVar = faixa.tarifaPct > 0;            // true = tarifa é % do preço
-    // Na faixa 0 (abaixo de R$ 8,00), a taxa de 50% é a comissão + tarifa combinadas
-    const comPct    = tarifaVar ? faixa.tarifaPct : faixa.com;
-    const comV      = preco * comPct / 100;            // comissão em R$
-    const margemV = method === 'custo'
-      ? custoBase * margem / 100                       // margem fixa sobre o custo
-      : preco * margem / 100;                          // margem sobre o preço
-    const tarifaV = tarifaVar
-      ? 0                                              // faixa 0: taxa já está em comV
-      : faixa.tar;                                    // tarifa fixa em R$
-    const pixPct  = el('pixToggle').checked ? faixa.pixPct : 0;
-    const precoPix = preco * (1 - pixPct/100);
-    const descPix  = preco - precoPix;
+    /* ── valores em R$ ─────────────────────────── */
+    // Comissão
+    const comPct = tarifaVar ? faixa.tarifaPct : faixa.com;
+    const comV   = preco * comPct / 100;
+
+    // Tarifa fixa (só faixas 1–5; faixa 0 não tem tarifa fixa separada)
+    const tarifaV = tarifaVar ? 0 : faixa.tar;
+
+    // Impostos + outras % (sempre sobre o preço anunciado)
+    const impostosV = preco * impostos / 100;
+    const outrasV   = preco * outrasPct / 100;
+    const impostosOutrasV = impostosV + outrasV;
+
+    // Pix
+    const pixPct   = el('pixToggle').checked ? faixa.pixPct : 0;
+    const precoPixV = preco * (1 - pixPct / 100);
+    const descPix  = preco - precoPixV;
     const temPix   = pixPct > 0;
 
-    // ── preço principal
+    // Margem em R$ — o que sobra depois de deduzir tudo do preço final
+    // Para "venda": margem% sobre o preço
+    // Para "custo": margem% sobre o custo (definição que o usuário controla)
+    const margemV = method === 'custo'
+      ? custoBase * margem / 100
+      : preco * margem / 100;
+
+    /* ── preço principal ───────────────────────── */
     txt('precoFinal', R$(preco));
 
-    // ── bloco pix
+    /* ── bloco pix ─────────────────────────────── */
     if (temPix) {
       el('precoPix').classList.add('ativo');
-      txt('precoPixVal', R$(precoPix));
+      txt('precoPixVal',  R$(precoPixV));
       txt('precoPixNota', `desconto de ${pct(pixPct)} absorvido pelo vendedor = ${R$(descPix)}`);
-    } else {
-      el('precoPix').classList.remove('ativo');
     }
 
-    // ── badges
+    /* ── badges ────────────────────────────────── */
     el('badgeTier').classList.add('ativo');
     txt('badgeTierTag',  `Faixa ${faixa.id}`);
     txt('badgeTierInfo', tarifaVar
       ? `${faixa.tarifaPct}% do preço`
-      : `${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.',',')}`);
+      : `${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.', ',')}`);
 
     if (temPix) {
       el('badgePix').classList.add('ativo');
       txt('badgePixInfo', `${pixPct}% descontado no Pix`);
-    } else {
-      el('badgePix').classList.remove('ativo');
     }
 
-    // valores em R$
-    const impostosV = preco * impostos / 100;
-    const outrasV   = preco * outrasPct / 100;
+    /* ── breakdown ─────────────────────────────── */
+    txt('bdCusto', R$(custoBase));
 
-    // ── breakdown
-    txt('bdCusto',    R$(custoBase));
-    txt('bdComissao', R$(comV));
-    txt('bdTarifa',   R$(tarifaV + impostosV + outrasV));
-    txt('bdMargem',   R$(margemV));
+    // Comissão
     txt('bdLabelComissao', tarifaVar
-      ? `Comissão + Tarifa (${faixa.tarifaPct}%)`
+      ? `Comissão + Tarifa Faixa ${faixa.id} (${faixa.tarifaPct}%)`
       : `Comissão Shopee (${faixa.com}%)`);
-    txt('bdLabelTarifa', tarifaVar
-      ? `Impostos + Outras (${impostos}% + ${outrasPct}%)`
-      : `Tarifa fixa faixa ${faixa.id}`);
+    txt('bdComissao', R$(comV));
 
+    // Tarifa fixa — visível só faixas 1–5
+    if (!tarifaVar && tarifaV > 0) {
+      bdShow('liTarifaFixa', 'bdLabelTarifaFixa', `Tarifa fixa Faixa ${faixa.id}`, 'bdTarifaFixa', tarifaV);
+    } else {
+      bdHide('liTarifaFixa');
+    }
+
+    // Impostos + outras %
+    if (impostosOutrasV > 0) {
+      const impLabel = outrasPct > 0
+        ? `Impostos ${pct(impostos)} + Outras ${pct(outrasPct)}`
+        : `Impostos (${pct(impostos)})`;
+      bdShow('liImpostos', 'bdLabelImpostos', impLabel, 'bdImpostos', impostosOutrasV);
+    } else {
+      bdHide('liImpostos');
+    }
+
+    // Pix
     if (temPix) {
       el('liPix').classList.add('ativo');
       txt('bdPix', `− ${R$(descPix)}`);
@@ -1042,12 +1087,13 @@ function calcular() {
       el('liPix').classList.remove('ativo');
     }
 
-    // ── detalhamento passo a passo
-    const somaPct = margemEff + faixa.com + faixa.tarifaPct + impostos + outrasPct;
+    txt('bdMargem', R$(margemV));
+
+    /* ── detalhamento passo a passo ─────────────── */
     if (tarifaVar) {
-      // ── FAIXA 0: tarifa % entra no divisor
-      const pctDiv = margemEff + faixa.com + faixa.tarifaPct + impostos + outrasPct;
-      const divisor = 1 - pctDiv/100;
+      // Faixa 0: tarifa % entra no divisor
+      const pctDiv  = margemEff + faixa.tarifaPct + impostos + outrasPct;
+      const divisor = 1 - pctDiv / 100;
 
       if (method === 'custo') {
         html('dt01Desc',
@@ -1056,145 +1102,161 @@ function calcular() {
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
-          `Preço base = ${R$(custoBase)} × (1 + ${pct(margem)}) = ${R$(custoBase)} × ${dec3(1 + margem/100)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada <strong>sobre o custo</strong></small>`);
+          `Preço base (c/ margem s/ custo) = ${R$(custoBase)} × (1 + ${pct(margem)}) = <strong>${R$(precoBase)}</strong><br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada sobre o custo antes do divisor</small>`);
         txt('dt02Res', R$(precoBase));
 
         html('dt03Desc',
-          `Divisor = 1 − (<strong>${pct(faixa.tarifaPct)}</strong> comissão + ${pct(impostos)} impostos + ${pct(outrasPct)} outras) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Comissão de ${pct(faixa.tarifaPct)} + impostos + outras% no divisor</small>`);
+          `Divisor = 1 − (${pct(faixa.tarifaPct)} + ${pct(impostos)} + ${pct(outrasPct)}) ÷ 100 = 1 − ${dec3(pctDiv / 100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Comissão ${pct(faixa.tarifaPct)} + impostos + outras% — margem já está no numerador</small>`);
         txt('dt03Res', dec3(divisor));
 
         html('dt04Desc',
-          `Preço de venda = ${R$(precoBase)} ÷ ${dec3(divisor)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, comissão sobre o preço</small>`);
+          `Preço de venda = ${R$(precoBase)} ÷ ${dec3(divisor)}`);
         txt('dt04Res', R$(preco));
+
       } else {
         html('dt01Desc',
-          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
-          `<small style="color:var(--texto-painel-mudo)">⚠️ Faixa ${faixa.id}: comissão de <strong style="color:var(--texto-painel)">${faixa.tarifaPct}% do preço</strong> — variável, vai para o divisor</small>`);
+          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional)`);
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
-          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (comissão faixa ${faixa.id})${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras %)` : ''}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Tudo sobre o preço de venda → soma no divisor</small>`);
+          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.tarifaPct)}</strong> (comissão Faixa ${faixa.id})`+
+          `${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras)` : ''}`);
         txt('dt02Res', pct(pctDiv));
 
-        html('dt03Desc',
-          `Divisor = 1 − (${pct(pctDiv)} ÷ 100) = 1 − ${dec3(pctDiv/100)}<br>`);
+        html('dt03Desc', `Divisor = 1 − ${dec3(pctDiv / 100)}`);
         txt('dt03Res', dec3(divisor));
 
-        html('dt04Desc',
-          `Preço de venda = ${R$(custoBase)} ÷ ${dec3(divisor)}<br>`);
+        html('dt04Desc', `Preço de venda = ${R$(custoBase)} ÷ ${dec3(divisor)}`);
         txt('dt04Res', R$(preco));
       }
 
     } else {
-      // ── FAIXAS 1–5: tarifa fixa no numerador
-      const pctDiv = margemEff + faixa.com + impostos + outrasPct;
-      const divisor = 1 - pctDiv/100;
-      const custoComTarifa = custoBase + faixa.tar;
+      // Faixas 1–5: tarifa fixa no numerador
+      const pctDiv  = margemEff + faixa.com + impostos + outrasPct;
+      const divisor = 1 - pctDiv / 100;
 
       if (method === 'custo') {
         const totalComMargem = precoBase + faixa.tar;
         html('dt01Desc',
           `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Tarifa fixa de <strong>${R$(faixa.tar)}</strong> ainda não entra — vai somar depois da margem</small>`);
+          `<small style="color:var(--texto-painel-mudo)">Tarifa fixa de <strong>${R$(faixa.tar)}</strong> (Faixa ${faixa.id}) é somada após a margem</small>`);
         txt('dt01Res', R$(custoBase));
 
         html('dt02Desc',
-          `Preço base = ${R$(custoBase)} × (1 + ${pct(margem)}) = ${R$(custoBase)} × ${dec3(1 + margem/100)}<br>`+
-          `+ tarifa fixa = ${R$(precoBase)} + ${R$(faixa.tar)} = <strong>${R$(totalComMargem)}</strong><br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} sobre o custo, depois tarifa somada</small>`);
+          `Preço base = ${R$(custoBase)} × (1 + ${pct(margem)}) = ${R$(precoBase)}<br>`+
+          `+ tarifa fixa Faixa ${faixa.id} = ${R$(precoBase)} + ${R$(faixa.tar)} = <strong>${R$(totalComMargem)}</strong><br>`+
+          `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} sobre o custo, depois tarifa fixa somada</small>`);
         txt('dt02Res', R$(totalComMargem));
 
         html('dt03Desc',
-          `Divisor = 1 − (${pct(faixa.com)} comissão${impostos ? ` + ${pct(impostos)} impostos` : ''}${outrasPct ? ` + ${pct(outrasPct)} outras` : ''}) ÷ 100 = 1 − ${dec3(pctDiv/100)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Apenas % no divisor — margem já está no numerador</small>`);
+          `Divisor = 1 − (${pct(faixa.com)} comissão${impostos ? ` + ${pct(impostos)} impostos` : ''}${outrasPct ? ` + ${pct(outrasPct)} outras` : ''}) ÷ 100 = 1 − ${dec3(pctDiv / 100)}<br>`+
+          `<small style="color:var(--texto-painel-mudo)">Tarifa fixa já está no numerador; só % entram no divisor</small>`);
         txt('dt03Res', dec3(divisor));
 
-        html('dt04Desc',
-          `Preço de venda = ${R$(totalComMargem)} ÷ ${dec3(divisor)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem sobre custo, taxas sobre o preço</small>`);
+        html('dt04Desc', `Preço de venda = ${R$(totalComMargem)} ÷ ${dec3(divisor)}`);
         txt('dt04Res', R$(preco));
 
       } else {
         const ctBase = custoBase + faixa.tar;
         html('dt01Desc',
-          `Custo base = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional) + <strong>${R$(faixa.tar)}</strong> (tarifa fixa faixa ${faixa.id})<br>`+
+          `Custo base = <strong>${R$(custo)}</strong> + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(operacional)}</strong> (operacional) + <strong>${R$(faixa.tar)}</strong> (tarifa fixa Faixa ${faixa.id})<br>`+
           `<small style="color:var(--texto-painel-mudo)">Tarifa fixa não varia com o preço → entra no numerador como custo</small>`);
         txt('dt01Res', R$(ctBase));
 
         html('dt02Desc',
-          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão faixa ${faixa.id})${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras %)` : ''}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Todos sobre o preço de venda → somam no divisor</small>`);
+          `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(faixa.com)}</strong> (comissão Faixa ${faixa.id})`+
+          `${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras)` : ''}`);
         txt('dt02Res', pct(pctDiv));
 
         html('dt03Desc',
-          `Divisor = 1 − (${pct(pctDiv)} ÷ 100) = 1 − ${dec3(pctDiv/100)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Fatia que sobra após descontar as %</small>`);
+          `Divisor = 1 − (${pct(pctDiv)} ÷ 100) = 1 − ${dec3(pctDiv / 100)}`);
         txt('dt03Res', dec3(divisor));
 
-        html('dt04Desc',
-          `Preço de venda = ${R$(ctBase)} ÷ ${dec3(divisor)}<br>`+
-          `<small style="color:var(--texto-painel-mudo)">Margem sobre o preço, não sobre o custo</small>`);
+        html('dt04Desc', `Preço de venda = ${R$(ctBase)} ÷ ${dec3(divisor)}`);
         txt('dt04Res', R$(preco));
       }
     }
 
-    // passo 05 — pix
+    // Passo 05 — Pix
     if (temPix) {
       el('dt05Pix').classList.add('ativo');
       html('dt05Desc',
-        `Preço com Pix = ${R$(preco)} × (1 − ${pct(pixPct)}) = ${R$(preco)} × ${dec3(1 - pixPct/100)}<br>`+
+        `Preço com Pix = ${R$(preco)} × (1 − ${pct(pixPct)}) = ${R$(preco)} × ${dec3(1 - pixPct / 100)}<br>`+
         `<small style="color:var(--texto-painel-mudo)">Subsídio Pix de ${pct(pixPct)} absorvido pelo vendedor</small>`);
-      txt('dt05Res', R$(precoPix));
+      txt('dt05Res', R$(precoPixV));
       html('dt05Nota',
-        `<span style="color:var(--texto-painel-mudo)">Diferença: ${R$(descPix)} | Faixa ${faixa.id}: ${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.',',')}</span>`);
-    } else {
-      el('dt05Pix').classList.remove('ativo');
+        `<span style="color:var(--texto-painel-mudo)">Diferença: ${R$(descPix)} | Faixa ${faixa.id}: ${faixa.com}% + R$ ${faixa.tar.toFixed(2).replace('.', ',')}</span>`);
     }
 
     return;
   }
 
-  /* ────────── MARKETPLACE SIMPLES ────────── */
-  const comissao     = val('comissao');
-  const fixoMp       = val('fixoMp');
-  const custoTotal   = custo + frete + fixoMp + operacional;
-  const method       = el('methodToggle').checked ? 'custo' : 'venda';
+  /* ══════════════════════════════════════════════
+     MARKETPLACE SIMPLES
+     ══════════════════════════════════════════════ */
+  const comissao   = val('comissao');
+  const fixoMp     = val('fixoMp');
+  const custoTotal = custo + frete + fixoMp + operacional;
 
-  // valida
-  const validPct = method === 'custo' ? comissao + impostos + outrasPct : margem + comissao + impostos + outrasPct;
-  if (validPct >= 100) {
+  // percentuais no divisor variam por método
+  const pctNoDivisor = method === 'custo'
+    ? comissao + impostos + outrasPct
+    : margem + comissao + impostos + outrasPct;
+
+  if (pctNoDivisor >= 100) {
     warn.hidden = false;
     warn.textContent = method === 'custo'
-      ? `Comissão + impostos + outros somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`
-      : `Margem + comissão + impostos + outros somam ${pct(validPct)} — igual ou acima de 100%. Reduza.`;
+      ? `Comissão + impostos + outros somam ${pct(pctNoDivisor)} — igual ou acima de 100%. Reduza.`
+      : `Margem + comissão + impostos + outros somam ${pct(pctNoDivisor)} — igual ou acima de 100%. Reduza.`;
     txt('precoFinal', '—');
-    ['bdCusto','bdComissao','bdTarifa','bdMargem'].forEach(id => txt(id,'—'));
-    txt('dt01Res','—'); txt('dt02Res','—'); txt('dt03Res','—'); txt('dt04Res','—');
+    ['bdCusto','bdComissao','bdMargem','bdImpostos','bdTarifaFixa'].forEach(id => txt(id, '—'));
+    bdHide('liTarifaFixa'); bdHide('liImpostos');
     return;
   }
 
   warn.hidden = true;
 
-  const pctNoDivisor = method === 'custo' ? comissao + impostos + outrasPct : margem + comissao + impostos + outrasPct;
-  const divisor      = 1 - pctNoDivisor / 100;
-  const precoBase    = method === 'custo' ? custoTotal * (1 + margem/100) : null;
-  const preco        = method === 'custo' ? precoBase / divisor : custoTotal / divisor;
+  const divisor   = 1 - pctNoDivisor / 100;
+  const precoBase = method === 'custo' ? custoTotal * (1 + margem / 100) : null;
+  const preco     = method === 'custo' ? precoBase / divisor : custoTotal / divisor;
 
-  // outputs
+  /* ── valores em R$ ─────────────────────────── */
+  const comV          = preco * comissao / 100;
+  const impostosOutrasV = preco * (impostos + outrasPct) / 100;
+  const margemV       = method === 'custo'
+    ? custoTotal * margem / 100
+    : preco * margem / 100;
+
+  /* ── preço ─────────────────────────────────── */
   txt('precoFinal', R$(preco));
 
-  txt('bdCusto',    R$(custoTotal));
-  txt('bdComissao', R$(preco * comissao/100));
-  txt('bdTarifa',   R$(preco * (impostos + outrasPct)/100 + fixoMp));
-  txt('bdMargem',   method === 'custo' ? R$(custoTotal * margem/100) : R$(preco * margem/100));
-  txt('bdLabelComissao', 'Comissão');
-  txt('bdLabelTarifa',   'Impostos + Outras + Fixo');
+  /* ── breakdown ─────────────────────────────── */
+  txt('bdCusto',        R$(custoTotal));
+  txt('bdLabelComissao', `Comissão (${pct(comissao)})`);
+  txt('bdComissao',     R$(comV));
 
-  // detalhamento
+  // Fixo MP — exibir separado se preenchido
+  if (fixoMp > 0) {
+    bdShow('liTarifaFixa', 'bdLabelTarifaFixa', 'Fixo Marketplace (R$)', 'bdTarifaFixa', fixoMp);
+  } else {
+    bdHide('liTarifaFixa');
+  }
+
+  // Impostos + outras %
+  if (impostosOutrasV > 0) {
+    const impLabel = outrasPct > 0
+      ? `Impostos ${pct(impostos)} + Outras ${pct(outrasPct)}`
+      : `Impostos (${pct(impostos)})`;
+    bdShow('liImpostos', 'bdLabelImpostos', impLabel, 'bdImpostos', impostosOutrasV);
+  } else {
+    bdHide('liImpostos');
+  }
+
+  txt('bdMargem', R$(margemV));
+
+  /* ── detalhamento passo a passo ─────────────── */
   if (method === 'custo') {
     html('dt01Desc',
       `Custo total = <strong>${R$(custo)}</strong> (custo) + <strong>${R$(frete)}</strong> (frete) + <strong>${R$(fixoMp)}</strong> (fixo MP) + <strong>${R$(operacional)}</strong> (operacional)<br>`+
@@ -1202,12 +1264,12 @@ function calcular() {
     txt('dt01Res', R$(custoTotal));
 
     html('dt02Desc',
-      `Preço base = ${R$(custoTotal)} × (1 + ${pct(margem)}) = ${R$(custoTotal)} × ${dec3(1 + margem/100)}<br>`+
+      `Preço base = ${R$(custoTotal)} × (1 + ${pct(margem)}) = ${R$(custoTotal)} × ${dec3(1 + margem / 100)}<br>`+
       `<small style="color:var(--texto-painel-mudo)">Margem de ${pct(margem)} aplicada <strong>sobre o custo</strong></small>`);
     txt('dt02Res', R$(precoBase));
 
     html('dt03Desc',
-      `Divisor = 1 − (${pct(comissao)} comissão${impostos ? ` + ${pct(impostos)} impostos` : ''}${outrasPct ? ` + ${pct(outrasPct)} outras` : ''}) ÷ 100 = 1 − ${dec3(pctNoDivisor/100)}<br>`+
+      `Divisor = 1 − (${pct(comissao)} comissão${impostos ? ` + ${pct(impostos)} impostos` : ''}${outrasPct ? ` + ${pct(outrasPct)} outras` : ''}) ÷ 100 = 1 − ${dec3(pctNoDivisor / 100)}<br>`+
       `<small style="color:var(--texto-painel-mudo)">Apenas % no divisor — margem já embutida no preço base</small>`);
     txt('dt03Res', dec3(divisor));
 
@@ -1223,12 +1285,12 @@ function calcular() {
     txt('dt01Res', R$(custoTotal));
 
     html('dt02Desc',
-      `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(comissao)}</strong> (comissão)${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras %)` : ''}<br>`+
-      `<small style="color:var(--texto-painel-mudo)">Todos incidem sobre o preço de venda → somam juntos no divisor</small>`);
+      `Soma dos percentuais = <strong>${pct(margem)}</strong> (margem) + <strong>${pct(comissao)}</strong> (comissão)`+
+      `${impostos ? ` + <strong>${pct(impostos)}</strong> (impostos)` : ''}${outrasPct ? ` + <strong>${pct(outrasPct)}</strong> (outras %)` : ''}`);
     txt('dt02Res', pct(pctNoDivisor));
 
     html('dt03Desc',
-      `Divisor = 1 − (${pct(pctNoDivisor)} ÷ 100) = 1 − ${dec3(pctNoDivisor/100)}<br>`+
+      `Divisor = 1 − (${pct(pctNoDivisor)} ÷ 100) = 1 − ${dec3(pctNoDivisor / 100)}<br>`+
       `<small style="color:var(--texto-painel-mudo)">A fatia do preço que sobra depois de tirar todas as % é o divisor</small>`);
     txt('dt03Res', dec3(divisor));
 
@@ -1245,20 +1307,20 @@ function calcular() {
 document.querySelectorAll('#calculadora input').forEach(e => e.addEventListener('input', calcular));
 el('calcMp').addEventListener('change', () => { aplicarMP(); calcular(); });
 el('pixToggle').addEventListener('change', calcular);
-el('methodToggle').addEventListener('change', function() {
+el('methodToggle').addEventListener('change', function () {
   el('methodLblVenda').classList.toggle('ativo', !this.checked);
   el('methodLblCusto').classList.toggle('ativo', this.checked);
   calcular();
 });
-el('btnDetalhar').addEventListener('click', function() {
+el('btnDetalhar').addEventListener('click', function () {
   const open = this.getAttribute('aria-expanded') === 'true';
-  this.setAttribute('aria-expanded', !open);
+  this.setAttribute('aria-expanded', String(!open));
   el('detalheCalculo').classList.toggle('aberto', !open);
 });
 
 // init
 el('methodLblVenda').classList.add('ativo');
-window.scrollTo(0,0);
+window.scrollTo(0, 0);
 aplicarMP();
 calcular();
 </script>
