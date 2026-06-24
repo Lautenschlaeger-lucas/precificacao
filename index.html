@@ -553,7 +553,7 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
           </label>
 
           <label class="field">
-            <span class="field-label">Margem de Lucro (%) (Por preço de custo)</span>
+            <span class="field-label" id="labelMargem">Margem de Lucro (%) (Por preço de custo)</span>
             <div class="input-suffix">
               <input id="margem" type="number" inputmode="decimal" step="0.1" min="0">
               <span class="sfx">%</span>
@@ -826,8 +826,8 @@ input:disabled{ opacity: .45; cursor: not-allowed; }
    CONFIG MARKETPLACES
    ============================================================ */
 const MP = {
-  mlclassico:    { comissao:14, impostos:8,  fixoMp:0, labelCom:'Comissão ML Clássico',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
-  mlpremium:     { comissao:19, impostos:8,  fixoMp:0, labelCom:'Comissão ML Premium',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  mlclassico:    { comissao:14, impostos:0,  fixoMp:0, labelCom:'Comissão ML Clássico',      labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
+  mlpremium:     { comissao:19, impostos:0,  fixoMp:0, labelCom:'Comissão ML Premium',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
   amazon:        { comissao:20, impostos:0,  fixoMp:0, labelCom:'Comissão Amazon',           labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
   magalu:        { comissao:16, impostos:0,  fixoMp:0, labelCom:'Comissão Magalu',           labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
   aliexpress:    { comissao:8,  impostos:0,  fixoMp:0, labelCom:'Comissão AliExpress',       labelImpostos:'Impostos (%)', labelFixoMp:'Fixo Marketplace (R$)' },
@@ -1308,8 +1308,12 @@ document.querySelectorAll('#calculadora input').forEach(e => e.addEventListener(
 el('calcMp').addEventListener('change', () => { aplicarMP(); calcular(); });
 el('pixToggle').addEventListener('change', calcular);
 el('methodToggle').addEventListener('change', function () {
-  el('methodLblVenda').classList.toggle('ativo', !this.checked);
-  el('methodLblCusto').classList.toggle('ativo', this.checked);
+  const isCusto = this.checked;
+  el('methodLblVenda').classList.toggle('ativo', !isCusto);
+  el('methodLblCusto').classList.toggle('ativo', isCusto);
+  txt('labelMargem', isCusto
+    ? 'Margem de Lucro (%) (Por preço de custo)'
+    : 'Margem de Lucro (%) (Por preço de venda)');
   calcular();
 });
 el('btnDetalhar').addEventListener('click', function () {
